@@ -19,7 +19,7 @@ minqual: 40
 keepcols: "sample,sj,io,ei,ai,GF,XF,rname"
 
 # Number of cpus to be used by pieline
-cpus: 2
+cpus: 4
 
 # Number of reads per fragment when splitting up bam file
 fragment_size: 25000

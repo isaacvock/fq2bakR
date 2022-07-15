@@ -1,20 +1,31 @@
 configfile: "config/config.yaml"
 
+FORMAT = config['FORMAT']
 
 def get_input_fastqs(wildcards):
-    return config["samples"][wildcards.sample]
+    return config["sample"][wildcard.sample]
 
-rule all:
-    input:
-        "results/bams/{sample}Aligned.Out.bam",
 
-rule preprocess:
-    input:
-        get_input_fastqs
-    output:
-        "results/sf_reads/{sample}.s.sam"
-    log:
-        "logs/sort_filter/{sample}.log"
-    threads: 20
-    shell:
-        "workflow/scripts/sort_filter.sh {config[cpus]} {wildcards.sample} {input} {output} {config[FORMAT]}"
+if FORMAT == 'PE':
+    rule preprocess:
+        input:
+            get_input_fastqs
+        output:
+            "results/fastq_cut/{sample}.t.r1.fastq"
+            "results/fastq_cut/{sample}.t.r2.fastq"
+        log:
+            "logs/preprocess/{sample}.log"
+        threads: 20
+        shell:
+            "workflow/scripts/preprocess_all.sh {config[cpus]} {wildcards.sample} {input} {config[FORMAT]} {output}"
+else:
+    rule preprocess:
+        input:
+            get_input_fastqs
+        output:
+            "results/fastq_cut/{sample}.t.fastq"
+        log:
+            "logs/sort_filter/{sample}.log"
+        threads: 20
+        shell:
+            "workflow/scripts/preprocess_all.sh {config[cpus]} {wildcards.sample} {input} {config[FORMAT]} {output}"

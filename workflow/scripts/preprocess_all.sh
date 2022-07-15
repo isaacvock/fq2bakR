@@ -1,18 +1,72 @@
 #!/bin/bash
 
-cpus=$1 # number of cpus
-sample=$2 # sample names
-input=$3 # input fastqs
-output=$4 # output
-annotation=$5 # gtf file location
-format=$6 # Paired or single end
+## Maybe I can have input be folders containing fastq files (of either SE or PE variety).
+## Throw out step where I check if gz or not (force them to be fastq files)
+## But other problem I have is that for whatever reasons, files get renamed
+    ## I guess this is needed to ensure consistency of naming
 
-# Define path to sample data and start in correct dir
-    cd $MASTER_DIR
-    cd "$sample".dir
+## Realized I can get file names from fastq folder with some bash
+    ## names=($(ls $fastq_dir)); names[0] is one of the read pair, names[1] is other if it exists
+    cpus=$1 # number of cpus
+    sample=$2 # sample names
+    fastq_dir=$3 # input fastqs
+    format=$4 # Paired or single end
+
+
 
 if ["$format" = "PE"]; then
+
+    output1=$5 # output1
+    output2=$6
+
     # Copy .fastq or .fastq.gz files into dir and create individual r1 and r2 fastq files:
+
+    if [[ -f $(echo ${fastq_dir}/*.fastq | cut -f 1 -d " ") ]]; then
+        suffix="fastq"
+    elif [[ -f $(echo ${fastq_dir}/*.gz | cut -f 1 -d " ") ]]; then
+        suffix="gz"
+    else
+        echo "!!! No fastq files found at location ${fastq_dir}"
+        exit 1
+    fi
+
+    fastqs=($(ls ${fastq_dir}))
+
+    # remove duplicate fastq reads:
+            fastuniq \
+                -i <(echo "${fastqs[0]}"; echo "${fastqs[1]}") \
+                -o "$sample"_1u.fastq \
+                -p "$sample"_2u.fastq &&
+
+             echo "* fastquniq finished for sample " $sample
+
+
+
+    # trim reads
+            echo "* Running cutadapt in parallel mode for sample $sample"
+
+
+                cutadapt \
+                    -a AGATCGGAAGAGC \
+                    -A AGATCGGAAGAGC \
+                    --minimum-length=20 \
+                    --cores="$cpus" \
+                    -o "$output1" \
+                    -p "$output2"\
+                    "$sample"_1u.fastq "$sample"_2u.fastq &&
+                echo "* cutadapt finished for " $sample
+
+
+
+            rm "$sample"_1u.fastq
+            rm "$sample"_2u.fastq
+
+
+elif ["$format" = "SE"]; then
+
+    output1=$5 # output1
+
+    # Copy .fastq or .fastq.gz files into dir and create individual r1:
         if [ "$step_copyfq" = "TRUE" ]; then
             # Check that files exist
             if [[ -f $(echo ${LINK_BASE}/${prefix}${sample}/*.fastq | cut -f 1 -d " ") ]]; then
@@ -41,65 +95,50 @@ if ["$format" = "PE"]; then
                 echo "* .fastq files decompressed for sample $sample"
             fi
 
-            cat *R1* > "$sample"_1.fastq &
-            cat *R2* > "$sample"_2.fastq
-            wait
+            cat *R1* > "$sample"_1.fastq
 
             rm -f *R1*
-            rm -f *R2*
+
         else
             echo "* Skipping copy fastq step"
         fi
 
 
-    # remove duplicate fastq reads:
-        if [ "$step_fastuniq" = "TRUE" ]; then
-            if [[ -n $FASTUNIQ_MOD ]]; then module load ${FASTUNIQ_MOD}; fi
-
-            $FASTUNIQ \
-                -i <(echo "$sample"_1.fastq; echo "$sample"_2.fastq) \
-                -o "$sample"_1u.fastq \
-                -p "$sample"_2u.fastq &&
-
-             echo "* fastquniq finished for sample " $sample
-
-            in1="$sample"_1u.fastq
-            in2="$sample"_2u.fastq
-            # Make files to archive:
-            rm "$sample"_{1,2}.fastq
-
-        else
-            echo "* Skipping fastuniq step"
-
-            in1="$sample"_1.fastq
-            in2="$sample"_2.fastq
-        fi
+        echo "* Skipping fastuniq step for SE data"
+        in="$sample"_1.fastq
 
 
-    # trim reads
         if [ "$step_cutadapt" = "TRUE" ]; then
             echo "* Running cutadapt in parallel mode for sample $sample"
-    
 
-                cutadapt \
-                    -a AGATCGGAAGAGC \
-                    -A AGATCGGAAGAGC \
+            if [[ -n $CUTADAPT_MOD ]]; then module load ${CUTADAPT_MOD}; fi
+
+            if [ "$STL" = "TRUE" ]; then
+                $CUTADAPT \
+                    -a ^CGATC...GATCGGAAGAGC \
+                    -a ^CGATC...GGAAGAGCACAC \
+                    -n 2 \
                     --minimum-length=20 \
                     --cores="$cpus" \
-                    -o "$sample".t.r1.fastq \
-                    -p "$sample".t.r2.fastq \
-                    "$in1" "$in2" &&
+                    -o "$sample".t.fastq \
+                    "$in" &&
                 echo "* cutadapt finished for " $sample
+            else
+                $CUTADAPT \
+                    -a AGATCGGAAGAGC \
+                    --minimum-length=20 \
+                    --cores="$cpus" \
+                    -o "$sample".t.fastq \
+                    "$in" &&
+                echo "* cutadapt finished for " $sample
+            fi
 
 
-
-            rm $in1
-            rm $in2
+            rm $in
         else
             echo "* Skipping cutadapt step"
         fi
-elif ["$format" = "SE"]; then
 
 else
-
+    echo "!!! format must be PE or SE !!!"
 fi
