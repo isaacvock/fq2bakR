@@ -1,17 +1,16 @@
 configfile: "config/config.yaml"
 
 
-def get_input_bams(wildcards):
+def get_input_fastqs(wildcards):
     return config["samples"][wildcards.sample]
 
 rule all:
     input:
-        "results/cB/master.csv.gz",
-        "results/cB/cB.csv.gz"
+        "results/bams/{sample}Aligned.Out.bam",
 
-rule sort_filter:
+rule preprocess:
     input:
-        get_input_bams
+        get_input_fastqs
     output:
         "results/sf_reads/{sample}.s.sam"
     log:
@@ -19,37 +18,3 @@ rule sort_filter:
     threads: 20
     shell:
         "workflow/scripts/sort_filter.sh {config[cpus]} {wildcards.sample} {input} {output} {config[FORMAT]}"
-
-rule htseq_cnt:
-    input:
-        "results/sf_reads/{sample}.s.sam"
-    output:
-        "results/bams/{sample}_tl.bam"
-    log:
-        "logs/htseq_cnt/{sample}.log"
-    threads: 20
-    shell:
-        "workflow/scripts/htseq.sh {config[cpus]} {wildcards.sample} {input} {output} {config[annotation]} {config[mutcnt]}"
-
-rule cnt_muts:
-    input:
-        "results/bams/{sample}_tl.bam"
-    output:
-        "results/counts/{sample}_counts.csv.gz"
-    log:
-        "logs/fragment_bam/{sample}.log"
-    threads: 20
-    shell:
-        "workflow/scripts/fragment.sh {config[cpus]} {wildcards.sample} {input} {output} {config[awkscript]} {config[fragment_size]} {config[minqual]} {config[mut_tracks]} {config[mutcall]} {config[FORMAT]}"
-
-rule makecB:
-    input:
-        expand("results/counts/{sample}_counts.csv.gz", sample=config["samples"])
-    output:
-        "results/cB/master.csv.gz",
-        "results/cB/cB.csv.gz"
-    log:
-        "logs/makecB/master.log"
-    threads: 20
-    shell:
-        "workflow/scripts/master.sh {config[cpus]} {output} {config[keepcols]} {config[mut_tracks]} "

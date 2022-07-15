@@ -1,7 +1,7 @@
 
 ### Parameters you MUST set
 
-# location of bam files
+# location of fastq files
 samples:
   WT_1: data/samples/DCP2_subsample1
   WT_2: data/samples/DCP2_subsample2
