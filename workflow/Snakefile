@@ -14,7 +14,7 @@ def get_input_fastqs(wildcards):
 if FORMAT == 'PE':
     rule all:
         input:
-            expand("results/fastq_cut/{S_ID}.t.r{pair}.fastq", S_ID=SAMP_NAMES, pair=PAIRS)
+            expand("results/bams/{S_ID}Aligned.out.bam", S_ID=SAMP_NAMES)
 else:
     rule all:
         input:
@@ -36,17 +36,17 @@ if FORMAT == 'PE':
         shell:
             "workflow/scripts/preprocess_all.sh {config[cpus]} {wildcards.sample} {input} {config[FORMAT]} {output}"
 
-    # rule align:
-    #     input:
-    #         "results/fastq_cut/{sample}.t.r1.fastq",
-    #         "results/fastq_cut/{sample}.t.r2.fastq"
-    #     output:
-    #         "results/bams/{sample}Aligned.out.bam"
-    #     log:
-    #         "logs/align/{sample}.log"
-    #     threads: CPU_num
-    #     shell:
-    #         "workflow/scripts/hisat2.sh {config[cpus]} {wildcards.sample} {input} {config[FORMAT]} {config[]} {output}"
+    rule align:
+        input:
+            "results/fastq_cut/{sample}.t.r1.fastq",
+            "results/fastq_cut/{sample}.t.r2.fastq"
+        output:
+            "results/bams/{sample}Aligned.out.bam"
+        log:
+            "logs/align/{sample}.log"
+        threads: CPU_num
+        shell:
+            "workflow/scripts/hisat2.sh {config[cpus]} {wildcards.sample} {config[FORMAT]} {config[READS]} {config[chr_tag]} {config[HISAT2]} {input} {output}"
 else:
 
     rule preprocess:

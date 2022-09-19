@@ -18,7 +18,7 @@ else
     input=$7
     output=$8
 fi
--
+
 
 # align trimmed reads to the  genome
     echo "* Aligning reads with HISAT2 for sample $sample"
