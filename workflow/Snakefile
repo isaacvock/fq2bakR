@@ -4,6 +4,8 @@ FORMAT = config['FORMAT']
 
 SAMP_NAMES = list(config['samples'].keys())
 
+CPU_num = config['cpus']
+
 PAIRS = [1, 2]
 
 def get_input_fastqs(wildcards):
@@ -30,7 +32,7 @@ if FORMAT == 'PE':
             "results/fastq_cut/{sample}.t.r2.fastq"
         log:
             "logs/preprocess/{sample}.log"
-        threads: 20
+        threads: CPU_num
         shell:
             "workflow/scripts/preprocess_all.sh {config[cpus]} {wildcards.sample} {input} {config[FORMAT]} {output}"
 
@@ -42,7 +44,7 @@ if FORMAT == 'PE':
     #         "results/bams/{sample}Aligned.out.bam"
     #     log:
     #         "logs/align/{sample}.log"
-    #     threads: 20
+    #     threads: CPU_num
     #     shell:
     #         "workflow/scripts/hisat2.sh {config[cpus]} {wildcards.sample} {input} {config[FORMAT]} {config[]} {output}"
 else:
@@ -54,6 +56,6 @@ else:
             "results/fastq_cut/{sample}.t.fastq"
         log:
             "logs/sort_filter/{sample}.log"
-        threads: 20
+        threads: CPU_num
         shell:
             "workflow/scripts/preprocess_all.sh {config[cpus]} {wildcards.sample} {input} {config[FORMAT]} {output}"
