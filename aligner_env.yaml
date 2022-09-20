@@ -1,4 +1,4 @@
-name: aligner-env2
+name: aligner-env3
 channels:
   - bioconda
   - conda-forge
@@ -15,3 +15,4 @@ dependencies:
   - pysam =0.16.0.1
   - cutadapt =3.2
   - fastuniq =1.1
+  - bismark =0.22.1
