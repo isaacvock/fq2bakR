@@ -2,6 +2,8 @@ configfile: "config/config.yaml"
 
 FORMAT = config['FORMAT']
 
+ALIGNER = config['use_hisat3n']
+
 SAMP_NAMES = list(config['samples'].keys())
 
 CPU_num = config['cpus']
@@ -36,17 +38,32 @@ if FORMAT == 'PE':
         shell:
             "workflow/scripts/preprocess_all.sh {config[cpus]} {wildcards.sample} {input} {config[FORMAT]} {output}"
 
-    rule align:
-        input:
-            "results/fastq_cut/{sample}.t.r1.fastq",
-            "results/fastq_cut/{sample}.t.r2.fastq"
-        output:
-            "results/bams/{sample}Aligned.out.bam"
-        log:
-            "logs/align/{sample}.log"
-        threads: CPU_num
-        shell:
-            "workflow/scripts/hisat2.sh {config[cpus]} {wildcards.sample} {config[FORMAT]} {config[READS]} {config[chr_tag]} {config[HISAT2]} {input} {output}"
+    if ALIGNER:
+        rule align:
+            input:
+                "results/fastq_cut/{sample}.t.r1.fastq",
+                "results/fastq_cut/{sample}.t.r2.fastq"
+            output:
+                "results/bams/{sample}Aligned.out.bam"
+            log:
+                "logs/align/{sample}.log"
+            threads: CPU_num
+            shell:
+                "workflow/scripts/hisat_3n.sh {config[cpus]} {wildcards.sample} {config[FORMAT]} {config[READS]} {config[chr_tag]} {config[HISAT_3N]} {config[hisat3n_path]} {config[mut_tracks]} {input} {output}"
+
+    else:
+        rule align:
+            input:
+                "results/fastq_cut/{sample}.t.r1.fastq",
+                "results/fastq_cut/{sample}.t.r2.fastq"
+            output:
+                "results/bams/{sample}Aligned.out.bam"
+            log:
+                "logs/align/{sample}.log"
+            threads: CPU_num
+            shell:
+                "workflow/scripts/hisat2.sh {config[cpus]} {wildcards.sample} {config[FORMAT]} {config[READS]} {config[chr_tag]} {config[HISAT2]} {input} {output}"
+
 else:
 
     rule preprocess:
@@ -59,3 +76,28 @@ else:
         threads: CPU_num
         shell:
             "workflow/scripts/preprocess_all.sh {config[cpus]} {wildcards.sample} {input} {config[FORMAT]} {output}"
+
+    if ALIGNER:
+        rule align:
+            input:
+                "results/fastq_cut/{sample}.t.r1.fastq",
+                "results/fastq_cut/{sample}.t.r2.fastq"
+            output:
+                "results/bams/{sample}Aligned.out.bam"
+            log:
+                "logs/align/{sample}.log"
+            threads: CPU_num
+            shell:
+                "workflow/scripts/hisat2.sh {config[cpus]} {wildcards.sample} {config[FORMAT]} {config[READS]} {config[chr_tag]} {config[HISAT2]} {input} {output}"
+    else:
+        rule align:
+            input:
+                "results/fastq_cut/{sample}.t.r1.fastq",
+                "results/fastq_cut/{sample}.t.r2.fastq"
+            output:
+                "results/bams/{sample}Aligned.out.bam"
+            log:
+                "logs/align/{sample}.log"
+            threads: CPU_num
+            shell:
+                "workflow/scripts/hisat2.sh {config[cpus]} {wildcards.sample} {config[FORMAT]} {config[READS]} {config[chr_tag]} {config[HISAT2]} {input} {output}"
