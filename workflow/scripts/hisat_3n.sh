@@ -43,8 +43,8 @@ fi
         $HISAT_3N_PATH \
             -p "$cpus" \
             -x $HISAT_3N_INDEX \
-            -1 "$input1" \
-            -2 "$input2" \
+            -1 "$input2" \
+            -2 "$input1" \
             $( if [ $mut_tracks = GA ]; then echo "--base-change G,A"; else echo "--base-change T,C"; fi ) \
             $( if [ $chr_tag = 'TRUE' ]; then echo "--add-chrname "; fi ) \
             --rna-strandness FR \

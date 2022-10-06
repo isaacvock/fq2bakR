@@ -42,8 +42,8 @@ fi
         hisat2 \
             -p "$cpus" \
             -x $HISAT_INDEX \
-            -1 "$input1" \
-            -2 "$input2" \
+            -1 "$input2" \
+            -2 "$input1" \
             $( if [ $chr_tag = 'TRUE' ]; then echo "--add-chrname "; fi ) \
             --rna-strandness FR \
             --mp 4,2 \
