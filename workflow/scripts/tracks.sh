@@ -2,8 +2,8 @@
 #
 # To make filtered bam files and tracks with different numbers of mutations
 
-# Set normalization value
-normVal='1'
+## Set normalization value
+#normVal='1'
 
 ## Dependencies
 # Python
@@ -17,30 +17,45 @@ cpus=$1
 sample=$2
 input1=$3
 input2=$4
-mut_tracks=$5
-output=$6
+input3=$5
+mut_tracks=$6
 genome_fasta=$7
 WSL_b=$8
+normalize=$9
+pyscript=${10}
+output=${11}
+
+
+    # Create ./results/tracks/
+    touch "$output"
+
+	if [ $normalize ]; then
+		normVal=$(awk -v sam=$sample '$1 == sam {print $2}' ./results/normalization/scale)
+	else
+		normVal='1'
+		echo '* Tracks will not be normalized with scale factor. Setting normalization factor to 1'
+	fi
+
 
 
 # Test if count files exist
 
     echo '* Creating files for each level of counting.'
 
-    python ./workflow/scripts/count_to_tracks.py \
+    python $pyscript \
         -i $input1 \
-        -s $sample
+        -s ./results/tracks/$sample
 
 
 # Sort the starting .bam file by coordinate
-    samtools sort -@ "$cpus" -o "$sample"_sort.bam "$input2"
-    samtools index -@ "$cpus" "$sample"_sort.bam
+    samtools sort -@ "$cpus" -o ./results/tracks/"$sample"_sort.bam "$input2"
+    samtools index -@ "$cpus" ./results/tracks/"$sample"_sort.bam
 
 
 # Make .chrom.sizes file from .bam file header (alternative to .genome file for toTDF)
-    chrom_sizes=$(echo ${genome_fasta##*/} | cut -f 1 -d '.')".chrom.sizes"
+    chrom_sizes=./results/tracks/$(echo ${genome_fasta##*/} | cut -f 1 -d '.')".chrom.sizes"
     if [ ! -f $chrom_sizes ]; then
-            samtools view -H "$sample"_sort.bam \
+            samtools view -H ./results/tracks/"$sample"_sort.bam \
                 | awk -v OFS="\t" ' $1 ~ /^@SQ/ {split($2, chr, ":")
                                                  split($3, size, ":")
                                                  print chr[2], size[2]}' > "$chrom_sizes"
@@ -69,8 +84,8 @@ WSL_b=$8
         # Make track headers
         for count in $(seq 0 5); do
 
-            echo "track type=bedGraph name=\" $sample $b $count "plus \" description=\" $sample $b $count "positive strand\" visibility=full autoScale=off windowingFunction=mean viewLimits=0:10 color="${colVal[$count]} " altColor=10,10,10 priority=20" > "$sample"."$b"."$count".pos.bedGraph
-            echo "track type=bedGraph name=\" $sample $b $count "minus \" description=\" $sample $b $count "minus strand\" visibility=full negateValues=on autoScale=off windowingFunction=mean viewLimits=-10:0 color=10,10,10 altColor="${colVal[$count]} " priority=20" > "$sample"."$b"."$count".min.bedGraph
+            echo "track type=bedGraph name=\" $sample $b $count "plus \" description=\" $sample $b $count "positive strand\" visibility=full autoScale=off windowingFunction=mean viewLimits=0:10 color="${colVal[$count]} " altColor=10,10,10 priority=20" > ./results/tracks/"$sample"."$b"."$count".pos.bedGraph
+            echo "track type=bedGraph name=\" $sample $b $count "minus \" description=\" $sample $b $count "minus strand\" visibility=full negateValues=on autoScale=off windowingFunction=mean viewLimits=-10:0 color=10,10,10 altColor="${colVal[$count]} " priority=20" > ./results/tracks/"$sample"."$b"."$count".min.bedGraph
 
         done
     done
@@ -79,9 +94,9 @@ WSL_b=$8
     # Filter the reads
     parallel -j 1 samtools view -@ "$cpus" \
                                      -b \
-                                     -N "$sample"_{1}_{2}_reads.txt \
-                                     -o "$sample"_{1}_{2}.bam \
-                                     "$sample"_sort.bam ::: $muts \
+                                     -N ./results/tracks/"$sample"_{1}_{2}_reads.txt \
+                                     -o ./results/tracks/"$sample"_{1}_{2}.bam \
+                                     ./results/tracks/"$sample"_sort.bam ::: $muts \
                                                         ::: $(seq 0 5)
 
 
@@ -93,11 +108,11 @@ WSL_b=$8
 
             STAR \
                 --runMode inputAlignmentsFromBAM \
-                --inputBAMfile "$sample"_"$muts"_"$iter".bam \
+                --inputBAMfile ./results/tracks/"$sample"_"$muts"_"$iter".bam \
                 --outWigType bedGraph \
                 --outWigNorm None \
                 --outWigStrand Stranded \
-                --outFileNamePrefix ./"$sample"_"$muts"_"$iter"_
+                --outFileNamePrefix ./results/tracks/"$sample"_"$muts"_"$iter"_
 
         done
 
@@ -106,37 +121,37 @@ WSL_b=$8
         # Take only unique component of track
         parallel -j "$cpus" "awk -v norm=${normVal} \
                                         '{print \$1, \$2, \$3, {3}1*norm*\$4}' \
-                                        ${sample}_{1}_{2}_Signal.Unique.{4}.out.bg \
-                                        >> ${sample}.{1}.{2}.{5}.bedGraph" ::: $muts \
+                                        ./results/tracks/${sample}_{1}_{2}_Signal.Unique.{4}.out.bg \
+                                        >> ./results/tracks/${sample}.{1}.{2}.{5}.bedGraph" ::: $muts \
                                                                            ::: $(seq 0 5) \
                                                                            ::: + - \
                                                                            :::+ str1 str2 \
                                                                            :::+ pos min
 
-        rm "$sample"*.bg
+        rm ./results/tracks/"$sample"*.bg
 
     else
         # Make tracks
         parallel -j "$cpus" STAR \
                                 --runMode inputAlignmentsFromBAM \
-                                --inputBAMfile "$sample"_{1}_{2}.bam \
+                                --inputBAMfile ./results/tracks/"$sample"_{1}_{2}.bam \
                                 --outWigType bedGraph \
                                 --outWigNorm None \
                                 --outWigStrand Stranded \
-                                --outFileNamePrefix ./"$sample"_{1}_{2}_ ::: $muts \
+                                --outFileNamePrefix ./results/tracks/"$sample"_{1}_{2}_ ::: $muts \
                                                                          ::: $(seq 0 5)
 
         # Take only unique component of track
         parallel -j "$cpus" "awk -v norm=${normVal} \
                                         '{print \$1, \$2, \$3, {3}1*norm*\$4}' \
-                                        ${sample}_{1}_{2}_Signal.Unique.{4}.out.bg \
-                                        >> ${sample}.{1}.{2}.{5}.bedGraph" ::: $muts \
+                                        ./results/tracks/${sample}_{1}_{2}_Signal.Unique.{4}.out.bg \
+                                        >> ./results/tracks/${sample}.{1}.{2}.{5}.bedGraph" ::: $muts \
                                                                            ::: $(seq 0 5) \
                                                                            ::: + - \
                                                                            :::+ str1 str2 \
                                                                            :::+ pos min
 
-        rm "$sample"*.bg
+        rm ./results/tracks/"$sample"*.bg
 
 
     fi
@@ -159,21 +174,20 @@ WSL_b=$8
     # Make tdf files from the tracks
     parallel -j "$cpus" igvtools toTDF \
                                 -f mean,max \
-                                "$sample".{1}.{2}.{3}.bedGraph \
-                                "$sample".{1}.{2}.{3}.tdf \
+                                ./results/tracks/"$sample".{1}.{2}.{3}.bedGraph \
+                                ./results/tracks/"$sample".{1}.{2}.{3}.tdf \
                                 "$chrom_sizes" ::: $muts \
                                              ::: $(seq 0 5) \
                                              ::: pos min
 
-    touch "$output"
+    rm -f igv.log
 
-    mv *.tdf ./results/tracks/
 
-    rm "$sample"*.bam
-    rm "$sample"*_reads.txt
-    rm "$sample"*.bedGraph
-    rm "$sample"*.bai
-    rm "$sample"*.out
+    rm ./results/tracks/"$sample"*.bam
+    rm ./results/tracks/"$sample"*_reads.txt
+    rm ./results/tracks/"$sample"*.bedGraph
+    rm ./results/tracks/"$sample"*.bai
+    rm ./results/tracks/"$sample"*.out
     # rm -f "$sample"*.chrom.sizes
     #rm -f igv*
 

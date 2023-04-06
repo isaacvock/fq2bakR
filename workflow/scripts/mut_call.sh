@@ -6,14 +6,22 @@ sample=$2
 input=$3
 input_snp=$4
 output=$5
-awkscript=$6
-fragment_size=$7
-minqual=$8
-mut_tracks=$9
-mutcall=${10}
-format=${11}
+output2=$6
+minqual=$7
+mut_tracks=$8
+format=$9
+strand=${10}
+mutcnt=${11}
+awkscript=${12}
 
-# load tools
+# Create results/counts/
+touch "$output2"
+
+# Infer a decent fragment size
+num_reads=$(samtools view -@ "$cpus" -c "$input")
+fragment_size=$(echo "scale=0; $num_reads/$cpus" | bc)
+(( fragment_size++ ))
+
 
 # Spread the work load so all cpus are working at all times
     declare $(samtools view -@ "$cpus"  "$input" \
@@ -41,7 +49,7 @@ format=${11}
 
 
     for f in $(seq 1 $newFragmentNumber); do
-        samtools view -H "$input" > "$f"_"$sample".sam
+        samtools view -H "$input" > ./results/counts/"$f"_"$sample".sam
     done &&
 
 
@@ -52,8 +60,8 @@ format=${11}
     		-f "$awkscript" &&
 
     for f in $(seq 1 $newFragmentNumber); do
-        samtools view -@ "$cpus" -o "$f"_"$sample"_frag.bam "$f"_"$sample".sam
-        rm "$f"_"$sample".sam
+        samtools view -@ "$cpus" -o ./results/counts/"$f"_"$sample"_frag.bam ./results/counts/"$f"_"$sample".sam
+        rm ./results/counts/"$f"_"$sample".sam
     done &&
 
     echo "* Aligned .sam file fragmented for sample $sample"
@@ -69,11 +77,12 @@ format=${11}
 ## Need to add mutation call script to scripts!
 
 # Call mutations
-    parallel -j $cpus "python $mutcall -b {1} \
+    parallel -j $cpus "python $mutcnt -b {1} \
                                               --mutType $mut_tracks \
                                               --minQual $minqual \
-																							--SNPs "./results/snps/snp.txt" \
-                                              --reads $format" ::: *_"$sample"_frag.bam \
+											  --SNPs "./results/snps/snp.txt" \
+                                              --strandedness $strand \
+                                              --reads $format" ::: ./results/counts/*_"$sample"_frag.bam \
 
 
 
@@ -82,10 +91,10 @@ format=${11}
 
 # Combine output from fragments into single file
     # 1) _count.csv files
-    awk 'FNR > 1 || NR == 1' *_"$sample"_frag_counts.csv \
+    awk 'FNR > 1 || NR == 1' ./results/counts/*_"$sample"_frag_counts.csv \
         | pigz -p $cpus > "$output"
 
-    rm *_"$sample"_frag_counts.csv
+    rm ./results/counts/*_"$sample"_frag_counts.csv
 
 
 
@@ -93,6 +102,6 @@ format=${11}
 
 
 
-	rm -f *_"$sample"_frag.bam
+	rm -f ./results/counts/*_"$sample"_frag.bam
 
 	echo '* Cleaning up fragmented .bam files'

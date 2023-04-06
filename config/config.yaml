@@ -6,14 +6,14 @@
 #  WT_1: data/samples/DCP2_subsample1
 #  WT_2: data/samples/DCP2_subsample2
 #  WT_ctl: data/samples/DCP2_subsamplectl
- 
+
 samples:
   WT_1: ../../Quick_Pipeline/fastq/WT_1
   WT_2: ../../Quick_Pipeline/fastq/WT_2
   WT_ctl: ../../Quick_Pipeline/fastq/WT_ctl
   KO_1: ../../Quick_Pipeline/fastq/KO_1
   KO_2: ../../Quick_Pipeline/fastq/KO_2
-  KO_ctl: ../../Quick_Pipeline/fastq/KO_ctl  
+  KO_ctl: ../../Quick_Pipeline/fastq/KO_ctl
 
 # location of annotation gtf file
 annotation: ../TL-Snakemake/data/annotation/Homo_sapiens.GRCh38.104.chr_chr.gtf
@@ -79,6 +79,12 @@ minqual: 40
 
 # Which columns to keep in final cB.csv.gz file
 keepcols: "sample,sj,io,ei,ai,GF,XF,rname"
+
+# Adapter sequence, read 1 (or only one if single-end)
+adapter1: "AGATCGGAAGAGC"
+
+# Reverse adapter (only for paired-end)
+adapter2: "AGATCGGAAGAGC"
 
 
 ######## Parameters you should NEVER alter ########

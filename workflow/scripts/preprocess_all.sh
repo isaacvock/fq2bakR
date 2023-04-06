@@ -18,6 +18,8 @@ if [ "$format" = "PE" ]; then
 
     output1=$5 # output1
     output2=$6
+	adapter1=$7
+	adapter2=$8
 
     # Create array of fastq file names
     declare -a fastqs
@@ -41,8 +43,8 @@ if [ "$format" = "PE" ]; then
 
 
                 cutadapt \
-                    -a AGATCGGAAGAGC \
-                    -A AGATCGGAAGAGC \
+                    -a "$adapter1" \
+                    -A "$adapter2" \
                     --minimum-length=20 \
                     --cores="$cpus" \
                     -o "$output1" \
@@ -59,6 +61,7 @@ if [ "$format" = "PE" ]; then
 elif [ "$format" = "SE" ]; then
 
     output1=$5 # output1
+	adapter=$6
 
     # Create array of fastq file names
     declare -a fastqs
@@ -72,7 +75,7 @@ elif [ "$format" = "SE" ]; then
 
 
                 cutadapt \
-                    -a AGATCGGAAGAGC \
+                    -a "$adapter" \
                     --minimum-length=20 \
                     --cores="$cpus" \
                     -o "$output1" \
