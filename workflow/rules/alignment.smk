@@ -40,14 +40,15 @@ if FORMAT == 'PE':
                 chr = config["chr_tag"],
                 h3n = config["HISAT_3N"],
                 h3n_path = config["hisat3n_path"],
-                muts = config["mut_tracks"]
+                muts = config["mut_tracks"],
+                yale = config["Yale"]
             threads: workflow.cores
             conda:
                 "../envs/full.yaml"
             shell:
                 """
                 chmod +x {params.shellscript}
-                {params.shellscript} {threads} {wildcards.sample} {params.format} {params.strand} {params.chr} {params.h3n} {params.h3n_path} {params.muts} {input} {output}
+                {params.shellscript} {threads} {wildcards.sample} {params.format} {params.strand} {params.chr} {params.h3n} {params.h3n_path} {params.muts} {params.yale} {input} {output}
                 """
 
     else:
