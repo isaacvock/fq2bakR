@@ -1,28 +1,23 @@
 
 ### Parameters you MUST set
 
-# location of fastq files
-#samples:
-#  WT_1: data/samples/DCP2_subsample1
-#  WT_2: data/samples/DCP2_subsample2
-#  WT_ctl: data/samples/DCP2_subsamplectl
-
+# path to directory containing fastq files
 samples:
-  WT_1: ../../Quick_Pipeline/fastq/WT_1
-  WT_2: ../../Quick_Pipeline/fastq/WT_2
-  WT_ctl: ../../Quick_Pipeline/fastq/WT_ctl
-  KO_1: ../../Quick_Pipeline/fastq/KO_1
-  KO_2: ../../Quick_Pipeline/fastq/KO_2
-  KO_ctl: ../../Quick_Pipeline/fastq/KO_ctl
+  WT_1: data/fastq/WT_1
+  WT_2: data/fastq/WT_2
+  WT_ctl: data/fastq/WT_ctl
+  KO_1: data/fastq/KO_1
+  KO_2: data/fastq/KO_2
+  KO_ctl: data/fastq/KO_ctl
 
 # location of annotation gtf file
-annotation: ../TL-Snakemake/data/annotation/Homo_sapiens.GRCh38.104.chr_chr.gtf
+annotation: data/annotation/mini_GRCh38.gtf
 
 # -s4U control sample IDs
 control_samples: ['WT_ctl', 'KO_ctl']
 
 # location of genome fasta file
-genome_fasta: ../TL-Snakemake/data/genome/Homo_sapiens.GRCh38.dna.chr.fa
+genome_fasta: data/genome/Homo_sapiens.GRCh38.dna.chr.fa
 
 # location of hisat2 indices
 HISAT2: data/hisat2/grch38_tran/genome_tran
@@ -32,30 +27,20 @@ HISAT_3N: data/hisat_3n/GRCh38
 
 ### Parameters you should probably double check
 
-# Are you using the Windows subsystem for linux? 0 = Yes, 1 = No
-WSL: 1
-
 # If TRUE, hisat-3n will be used for alignment
 use_hisat3n: FALSE
 
-# If use_hisat3n TRUE, then this specifies path to hisat_3n
+# If TRUE STAR will be used for alignment
+use_star: FALSE
+
+# If use_hisat3n TRUE, then this specifies path to hisat_3n executable
 hisat3n_path: hisat-3n
-
-# Number of cpus to be used by pieline
-cpus: 20
-
-# Number of reads per fragment when splitting up bam file
-fragment_size: 25000
 
 # Format of reads
 FORMAT: "PE" # (PE, SE, NU)
                     # [SE - single end reads]
                     # [NU - including non-unique] (not tested)
 
-
-
-# Organism
-SPECIES: "Hs" # (Mm, Dm, Hs) [default: Mm]
 
 # Sequencing reads strandness relative to RNA transcript [depends on library prep and sequencing output]
 READS: "RF" # (FR, RF, F)
@@ -65,14 +50,8 @@ READS: "RF" # (FR, RF, F)
 # Type of browser tracks to generate
 mut_tracks: "TC" # ("TC", "GA", "TC,GA")
 
-# Program used for creating browser tracks
-track_prog: "STAR" # (STAR, bedtools)
-
 # Add a 'chr' to each chromosome number during alignment. [Useful when aliner index is number-based, but GTF annotation is chr-based]
 chr_tag: "TRUE"
-
-# whether to make .tdf files or not
-make_tracks: True
 
 # Minimum base quality to call mutation
 minqual: 40
@@ -86,9 +65,5 @@ adapter1: "AGATCGGAAGAGC"
 # Reverse adapter (only for paired-end)
 adapter2: "AGATCGGAAGAGC"
 
-
-######## Parameters you should NEVER alter ########
-awkscript: workflow/scripts/fragment_sam.awk
-mutcall: workflow/scripts/mut_call.py
-mutcnt: workflow/scripts/count_triple.py
-count2tracks: workflow/scripts/count_to_tracks.py
+# Are you using the Windows subsystem for linux? 0 = Yes, 1 = No
+WSL: 1
