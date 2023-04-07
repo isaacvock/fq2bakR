@@ -25,7 +25,7 @@ fi
 # align trimmed reads to the  genome
     echo "* Aligning reads with HISAT2 for sample $sample"
 
-    if [[ "$chr_tag" = "TRUE" ]]; then
+    if [ $chr_tag ]; then
         echo "* chr tag will be included in alignment for " $sample
     fi
 
