@@ -4,9 +4,9 @@ if FORMAT == 'PE':
         input:
             get_input_fastqs
         output:
-            fastq1="fastq_cut/{sample}.t.r1.fastq",
-            fastq2="fastq_cut/{sample}.t.r2.fastq",
-            qc = "fastq_cut/{sample}.qc.txt",
+            fastq1="results/fastq_cut/{sample}.t.r1.fastq",
+            fastq2="results/fastq_cut/{sample}.t.r2.fastq",
+            qc = "results/fastq_cut/{sample}.qc.txt",
         params:
             adapters=config["adapter"],
             extra=config["extra"], 
@@ -97,8 +97,8 @@ else:
         input:
             get_input_fastqs
         output:
-            fastq="fastq_cut/{sample}.t.fastq",
-            qc = "fastq_cut/{sample}.qc.txt",
+            fastq="results/fastq_cut/{sample}.t.fastq",
+            qc = "results/fastq_cut/{sample}.qc.txt",
         params:
             adapters=config["adapter"],
             extra=config["extra"], 
