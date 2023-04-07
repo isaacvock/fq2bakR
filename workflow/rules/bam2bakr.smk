@@ -67,7 +67,7 @@ rule index:
     log:
         "logs/genome-faidx.log",
     conda:
-        "../envs/index.yamls"
+        "../envs/index.yaml"
     script:
         "../scripts/genome-faidx.py"
 

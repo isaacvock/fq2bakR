@@ -58,6 +58,7 @@ fi
                 $( if [ $chr_tag = 'TRUE' ]; then echo "--add-chrname "; fi ) \
                 --rna-strandness RF \
                 -S "$output2"
+        fi
 
     elif [[ "$format" = "SE" ]]; then
         if [[ "$reads" = "F"]]; then
@@ -80,6 +81,8 @@ fi
                 $( if [ $chr_tag = 'TRUE' ]; then echo "--add-chrname "; fi ) \
                 --rna-strandness R \
                 -S "$output2"
+
+        fi
     else
         echo "! No PE/SE FORMAT parameter recognized for " $sample
         exit 1

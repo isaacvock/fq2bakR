@@ -52,6 +52,7 @@ fi
                 --rna-strandness FR \
                 --mp 4,2 \
                 -S "$output2"
+        fi
 
     elif [[ "$format" = "SE" ]]; then
         if [[ "$reads" = "F"]]; then
@@ -76,6 +77,8 @@ fi
                 --rna-strandness FR \
                 --mp 4,2 \
                 -S "$output2"
+        fi
+        
     else
         echo "! No PE/SE FORMAT parameter recognized for " $sample
         exit 1
