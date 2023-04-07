@@ -1,27 +1,42 @@
 if FORMAT == 'PE':
 
-
-    rule preprocess:
+    rule cutadapt:
         input:
             get_input_fastqs
         output:
-            "results/fastq_cut/{sample}.t.r1.fastq",
-            "results/fastq_cut/{sample}.t.r2.fastq"
-        log:
-            "logs/preprocess/{sample}.log"
+            fastq1="fastq_cut/{sample}.t.r1.fastq",
+            fastq2="fastq_cut/{sample}.t.r2.fastq",
+            qc = "fastq_cut/{sample}.qc.txt",
         params:
-            shellscript=workflow.source_path("../scripts/preprocess_all.sh"),
-            format = config["FORMAT"],
-            adapter1 = config["adapter1"],
-            adapter2 = config["adapter2"]
-        threads: workflow.cores
-        conda:
-            "../envs/full.yaml"
-        shell:
-            """
-            chmod +x {params.shellscript}
-            {params.shellscript} {threads} {wildcards.sample} {input} {params.format} {output} {params.adapter1} {params.adapter2} 1> {log} 2>&1
-            """
+            adapters="-a AGATCGGAAGAGC -A AGATCGGAAGAGC",
+            extra="--minimum-length 20", 
+        log:
+            "logs/cutadapt/{sample}.log",
+        threads: 8  # set desired number of threads here
+        wrapper:
+            "v1.25.0/bio/cutadapt/pe"       
+
+    #rule preprocess:
+    #    input:
+    #        get_input_fastqs
+    #    output:
+    #        "results/fastq_cut/{sample}.t.r1.fastq",
+    #        "results/fastq_cut/{sample}.t.r2.fastq"
+    #    log:
+    #        "logs/preprocess/{sample}.log"
+    #    params:
+    #        shellscript=workflow.source_path("../scripts/preprocess_all.sh"),
+    #        format = config["FORMAT"],
+    #        adapter1 = config["adapter1"],
+    #        adapter2 = config["adapter2"]
+    #    threads: workflow.cores
+    #    conda:
+    #        "../envs/full.yaml"
+    #    shell:
+    #        """
+    #        chmod +x {params.shellscript}
+    #        {params.shellscript} {threads} {wildcards.sample} {input} {params.format} {output} {params.adapter1} {params.adapter2} 1> {log} 2>&1
+    #        """
 
     if ALIGNER:
         rule align:
@@ -78,25 +93,40 @@ if FORMAT == 'PE':
 
 else:
 
-    rule preprocess:
+    rule cutadapt:
         input:
             get_input_fastqs
         output:
-            "results/fastq_cut/{sample}.t.fastq"
-        log:
-            "logs/sort_filter/{sample}.log"
+            fastq="fastq_cut/{sample}.t.fastq",
+            qc = "fastq_cut/{sample}.qc.txt",
         params:
-            shellscript=workflow.source_path("../scripts/preprocess_all.sh"),
-            format = config["FORMAT"],
-            adapter1 = config["adapter1"]
-        threads: workflow.cores
-        conda:
-            "../envs/full.yaml"
-        shell:
-            """
-            chmod +x {params.shellscript}
-            {params.shellscript} {threads} {wildcards.sample} {input} {params.format} {output} {params.adapter1} 1> {log} 2>&1
-            """
+            adapters="-a AGATCGGAAGAGC",
+            extra="--minimum-length 20", 
+        log:
+            "logs/cutadapt/{sample}.log",
+        threads: 8  # set desired number of threads here
+        wrapper:
+            "v1.25.0/bio/cutadapt/se" 
+
+    #rule preprocess:
+    #    input:
+    #        get_input_fastqs
+    #    output:
+    #        "results/fastq_cut/{sample}.t.fastq"
+    #    log:
+    #        "logs/sort_filter/{sample}.log"
+    #    params:
+    #        shellscript=workflow.source_path("../scripts/preprocess_all.sh"),
+    #        format = config["FORMAT"],
+    #        adapter1 = config["adapter1"]
+    #    threads: workflow.cores
+    #    conda:
+    #        "../envs/full.yaml"
+    #    shell:
+    #        """
+    #        chmod +x {params.shellscript}
+    #        {params.shellscript} {threads} {wildcards.sample} {input} {params.format} {output} {params.adapter1} 1> {log} 2>&1
+    #        """
 
     if ALIGNER:
         rule align:
