@@ -20,7 +20,7 @@ if FORMAT == 'PE':
         shell:
             """
             chmod +x {params.shellscript}
-            {params.shellscript} {threads} {wildcards.sample} {input} {params.format} {output} {params.adapter1} {params.adapter2}
+            {params.shellscript} {threads} {wildcards.sample} {input} {params.format} {output} {params.adapter1} {params.adapter2} 1> {log} 2>&1
             """
 
     if ALIGNER:
@@ -48,7 +48,7 @@ if FORMAT == 'PE':
             shell:
                 """
                 chmod +x {params.shellscript}
-                {params.shellscript} {threads} {wildcards.sample} {params.format} {params.strand} {params.chr} {params.h3n} {params.h3n_path} {params.muts} {params.yale} {input} {output}
+                {params.shellscript} {threads} {wildcards.sample} {params.format} {params.strand} {params.chr} {params.h3n} {params.h3n_path} {params.muts} {params.yale} {input} {output} 1> {log} 2>&1
                 """
 
     else:
@@ -73,7 +73,7 @@ if FORMAT == 'PE':
             shell:
                 """
                 chmod +x {params.shellscript}
-                {params.shellscript} {threads} {wildcards.sample} {params.format} {params.strand} {params.chr} {params.h2} {input} {output}
+                {params.shellscript} {threads} {wildcards.sample} {params.format} {params.strand} {params.chr} {params.h2} {input} {output} 1> {log} 2>&1
                 """
 
 else:
@@ -95,7 +95,7 @@ else:
         shell:
             """
             chmod +x {params.shellscript}
-            {params.shellscript} {threads} {wildcards.sample} {input} {params.format} {output} {params.adapter1}
+            {params.shellscript} {threads} {wildcards.sample} {input} {params.format} {output} {params.adapter1} 1> {log} 2>&1
             """
 
     if ALIGNER:
@@ -122,7 +122,7 @@ else:
             shell:
                 """
                 chmod +x {params.shellscript}
-                {params.shellscript} {threads} {wildcards.sample} {params.format} {params.strand} {params.chr} {params.h3n} {params.h3n_path} {params.muts} {params.yale} {input} {output}
+                {params.shellscript} {threads} {wildcards.sample} {params.format} {params.strand} {params.chr} {params.h3n} {params.h3n_path} {params.muts} {params.yale} {input} {output} 1> {log} 2>&1
                 """
     else:
         rule align:
@@ -145,5 +145,5 @@ else:
             shell:
                 """
                 chmod +x {params.shellscript}
-                {params.shellscript} {threads} {wildcards.sample} {params.format} {params.strand} {params.chr} {params.h2} {input} {output}
+                {params.shellscript} {threads} {wildcards.sample} {params.format} {params.strand} {params.chr} {params.h2} {input} {output} 1> {log} 2>&1
                 """
