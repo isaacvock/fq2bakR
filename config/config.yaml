@@ -62,11 +62,11 @@ minqual: 40
 # Which columns to keep in final cB.csv.gz file
 keepcols: "sample,sj,io,ei,ai,GF,XF,rname"
 
-# Adapter sequence, read 1 (or only one if single-end)
-adapter1: "AGATCGGAAGAGC"
+# code that will be passed to cutadapt
+adapter: "-a AGATCGGAAGAGC -A AGATCGGAAGAGC"
 
-# Reverse adapter (only for paired-end)
-adapter2: "AGATCGGAAGAGC"
+# Optional code to pass to cutadapt
+extra: "--minimum-length 20"
 
 # String common to spike-in gene_ids in annotation gtf
   # If you have no spike-ins, then this should be "\"\"", i.e., an empty string ("")

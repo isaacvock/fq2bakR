@@ -8,8 +8,8 @@ if FORMAT == 'PE':
             fastq2="fastq_cut/{sample}.t.r2.fastq",
             qc = "fastq_cut/{sample}.qc.txt",
         params:
-            adapters="-a AGATCGGAAGAGC -A AGATCGGAAGAGC",
-            extra="--minimum-length 20", 
+            adapters=config["adapter"],
+            extra=config["extra"], 
         log:
             "logs/cutadapt/{sample}.log",
         threads: 8  # set desired number of threads here
@@ -100,8 +100,8 @@ else:
             fastq="fastq_cut/{sample}.t.fastq",
             qc = "fastq_cut/{sample}.qc.txt",
         params:
-            adapters="-a AGATCGGAAGAGC",
-            extra="--minimum-length 20", 
+            adapters=config["adapter"],
+            extra=config["extra"], 
         log:
             "logs/cutadapt/{sample}.log",
         threads: 8  # set desired number of threads here
