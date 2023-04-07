@@ -24,6 +24,8 @@ else
 fi
 
 if [ $yale ]; then
+    module purge
+    module load StdEnv
     module load HISAT-3N
 fi
 
