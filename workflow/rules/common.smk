@@ -23,6 +23,5 @@ nctl = len(CTL_NAMES)
 def get_input_fastqs(wildcards):
     fastq_path = config["samples"][wildcards.sample]
     fastq_files = glob.glob(f"{fastq_path}/*.fastq*")
-    fastq_paths = tuple(os.path.join(fastq_path, f) for f in fastq_files)
-    return tuple(fastq_paths)
+    return fastq_files
 
