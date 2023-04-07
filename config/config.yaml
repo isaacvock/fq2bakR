@@ -1,4 +1,3 @@
-
 ### Parameters you MUST set
 
 # path to directory containing fastq files
@@ -25,12 +24,15 @@ HISAT2: data/hisat2/grch38_tran/genome_tran
 # location of hisat3n indices
 HISAT_3N: data/hisat_3n/GRCh38
 
+# location of STAR indices
+STAR_index: data/star/
+
 ### Parameters you should probably double check
 
 # If TRUE, hisat-3n will be used for alignment
 use_hisat3n: False
 
-# If TRUE STAR will be used for alignment
+# If TRUE STAR will be used for alignment;  if hisat-3n is also TRUE, hisat-3n will be used and not STAR
 use_star: False
 
 # If use_hisat3n TRUE, then this specifies path to hisat_3n executable
@@ -64,6 +66,9 @@ keepcols: "sample,sj,io,ei,ai,GF,XF,rname"
 
 # code that will be passed to cutadapt
 adapter: "-a AGATCGGAAGAGC -A AGATCGGAAGAGC"
+
+# Extra parameters to be passed to STAR
+star: ""
 
 # Optional code to pass to cutadapt
 extra: "--minimum-length 20"

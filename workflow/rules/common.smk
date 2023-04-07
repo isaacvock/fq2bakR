@@ -16,6 +16,8 @@ FORMAT = config['FORMAT']
 
 ALIGNER = config['use_hisat3n']
 
+STAR = config['use_star']
+
 NORMALIZE = config['normalize']
 
 PAIRS = [1, 2]

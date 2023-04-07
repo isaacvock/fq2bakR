@@ -16,28 +16,6 @@ if FORMAT == 'PE':
         wrapper:
             "v1.25.0/bio/cutadapt/pe"       
 
-    #rule preprocess:
-    #    input:
-    #        get_input_fastqs
-    #    output:
-    #        "results/fastq_cut/{sample}.t.r1.fastq",
-    #        "results/fastq_cut/{sample}.t.r2.fastq"
-    #    log:
-    #        "logs/preprocess/{sample}.log"
-    #    params:
-    #        shellscript=workflow.source_path("../scripts/preprocess_all.sh"),
-    #        format = config["FORMAT"],
-    #        adapter1 = config["adapter1"],
-    #        adapter2 = config["adapter2"]
-    #    threads: workflow.cores
-    #    conda:
-    #        "../envs/full.yaml"
-    #    shell:
-    #        """
-    #        chmod +x {params.shellscript}
-    #        {params.shellscript} {threads} {wildcards.sample} {input} {params.format} {output} {params.adapter1} {params.adapter2} 1> {log} 2>&1
-    #        """
-
     if ALIGNER:
         rule align:
             input:
@@ -65,6 +43,29 @@ if FORMAT == 'PE':
                 chmod +x {params.shellscript}
                 {params.shellscript} {threads} {wildcards.sample} {params.format} {params.strand} {params.chr} {params.h3n} {params.h3n_path} {params.muts} {params.yale} {input} {output} 1> {log} 2>&1
                 """
+
+    elif STAR:
+        rule align:
+            input:
+                fq1 = "results/fastq_cut/{sample}.t.r1.fastq",
+                fq2 = "results/fastq_cut/{sample}.t.r2.fastq",
+                index = config['STAR_index'],
+            output:
+                aln="results/bams/{sample}Aligned.out.bam",
+                reads_per_gene="results/bams/{sample}-ReadsPerGene.out.tab",
+                aln_tx="results/bams/{sample}-Aligned.toTranscriptome.out.bam",
+            log:
+                "logs/bams/{sample}.log",
+            params:
+                idx=lambda wc, input: input.index,
+                extra="--outSAMtype BAM SortedByCoordinate --outFilterMismatchNmax 23 --outSAMattributes NH HI AS NM MD --quantMode TranscriptomeSAM GeneCounts --sjdbGTFfile {} {}".format(
+                    str(config["annotation"]), config["star_params"]
+                ),
+            conda:
+                "../envs/star.yaml"
+            threads: 24
+            script: 
+                "../scripts/star-align.py"
 
     else:
         rule align:
@@ -108,26 +109,6 @@ else:
         wrapper:
             "v1.25.0/bio/cutadapt/se" 
 
-    #rule preprocess:
-    #    input:
-    #        get_input_fastqs
-    #    output:
-    #        "results/fastq_cut/{sample}.t.fastq"
-    #    log:
-    #        "logs/sort_filter/{sample}.log"
-    #    params:
-    #        shellscript=workflow.source_path("../scripts/preprocess_all.sh"),
-    #        format = config["FORMAT"],
-    #        adapter1 = config["adapter1"]
-    #    threads: workflow.cores
-    #    conda:
-    #        "../envs/full.yaml"
-    #    shell:
-    #        """
-    #        chmod +x {params.shellscript}
-    #        {params.shellscript} {threads} {wildcards.sample} {input} {params.format} {output} {params.adapter1} 1> {log} 2>&1
-    #        """
-
     if ALIGNER:
         rule align:
             input:
@@ -154,6 +135,29 @@ else:
                 chmod +x {params.shellscript}
                 {params.shellscript} {threads} {wildcards.sample} {params.format} {params.strand} {params.chr} {params.h3n} {params.h3n_path} {params.muts} {params.yale} {input} {output} 1> {log} 2>&1
                 """
+
+    elif STAR:
+        rule align:
+            input:
+                fq1 = "results/fastq_cut/{sample}.t.fastq",
+                index = config['STAR_index'],
+            output:
+                aln="results/bams/{sample}Aligned.out.bam",
+                reads_per_gene="results/bams/{sample}-ReadsPerGene.out.tab",
+                aln_tx="results/bams/{sample}-Aligned.toTranscriptome.out.bam",
+            log:
+                "logs/bams/{sample}.log",
+            params:
+                idx=lambda wc, input: input.index,
+                extra="--outSAMtype BAM SortedByCoordinate --outFilterMismatchNmax 23 --outSAMattributes NH HI AS NM MD --quantMode TranscriptomeSAM GeneCounts --sjdbGTFfile {} {}".format(
+                    str(config["annotation"]), config["star_params"]
+                ),
+            conda:
+                "../envs/star.yaml"
+            threads: 24
+            script: 
+                "../scripts/star-align.py"
+
     else:
         rule align:
             input:
