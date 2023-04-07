@@ -29,13 +29,14 @@ if FORMAT == 'PE':
                 "results/fastq_cut/{sample}.t.r1.fastq",
                 "results/fastq_cut/{sample}.t.r2.fastq"
             output:
-                "results/bams/{sample}Aligned.out.bam"
+                "results/bams/{sample}Aligned.out.bam",
+                "results/bams/{sample}.sam"
             log:
                 "logs/align/{sample}.log"
             params:
                 shellscript = workflow.source_path("../scripts/hisat_3n.sh"),
                 format = config["FORMAT"],
-                reads = config["READS"],
+                strand = config["strandedness"],
                 chr = config["chr_tag"],
                 h3n = config["HISAT_3N"],
                 h3n_path = config["hisat3n_path"],
@@ -46,7 +47,7 @@ if FORMAT == 'PE':
             shell:
                 """
                 chmod +x {params.shellscript}
-                {params.shellscript} {threads} {wildcards.sample} {params.format} {params.reads} {params.chr} {params.h3n} {params.h3n_path} {params.muts} {input} {output}
+                {params.shellscript} {threads} {wildcards.sample} {params.format} {params.strand} {params.chr} {params.h3n} {params.h3n_path} {params.muts} {input} {output}
                 """
 
     else:
@@ -55,13 +56,14 @@ if FORMAT == 'PE':
                 "results/fastq_cut/{sample}.t.r1.fastq",
                 "results/fastq_cut/{sample}.t.r2.fastq"
             output:
-                "results/bams/{sample}Aligned.out.bam"
+                "results/bams/{sample}Aligned.out.bam",
+                "results/bams/{sample}.sam"
             log:
                 "logs/align/{sample}.log"
             params:
                 shellscript = workflow.source_path("../scripts/hisat2.sh"),
                 format = config["FORMAT"],
-                reads = config["READS"],
+                strand = config["strandedness"],
                 chr = config["chr_tag"],
                 h2 = config["HISAT2"]
             threads: workflow.cores
@@ -70,7 +72,7 @@ if FORMAT == 'PE':
             shell:
                 """
                 chmod +x {params.shellscript}
-                {params.shellscript} {threads} {wildcards.sample} {params.format} {params.reads} {params.chr} {params.h2} {input} {output}
+                {params.shellscript} {threads} {wildcards.sample} {params.format} {params.strand} {params.chr} {params.h2} {input} {output}
                 """
 
 else:
@@ -100,13 +102,14 @@ else:
             input:
                 "results/fastq_cut/{sample}.t.fastq",
             output:
-                "results/bams/{sample}Aligned.out.bam"
+                "results/bams/{sample}Aligned.out.bam",
+                "results/bams/{sample}.sam"
             log:
                 "logs/align/{sample}.log"
             params:
                 shellscript = workflow.source_path("../scripts/hisat_3n.sh"),
                 format = config["FORMAT"],
-                reads = config["READS"],
+                strand = config["strandedness"],
                 chr = config["chr_tag"],
                 h3n = config["HISAT_3N"],
                 h3n_path = config["hisat3n_path"],
@@ -117,20 +120,21 @@ else:
             shell:
                 """
                 chmod +x {params.shellscript}
-                {params.shellscript} {threads} {wildcards.sample} {params.format} {params.reads} {params.chr} {params.h3n} {params.h3n_path} {params.muts} {input} {output}
+                {params.shellscript} {threads} {wildcards.sample} {params.format} {params.strand} {params.chr} {params.h3n} {params.h3n_path} {params.muts} {input} {output}
                 """
     else:
         rule align:
             input:
                 "results/fastq_cut/{sample}.t.fastq",
             output:
-                "results/bams/{sample}Aligned.out.bam"
+                "results/bams/{sample}Aligned.out.bam",
+                "results/bams/{sample}.sam"
             log:
                 "logs/align/{sample}.log"
             params:
                 shellscript = workflow.source_path("../scripts/hisat2.sh"),
                 format = config["FORMAT"],
-                reads = config["READS"],
+                strand = config["strandedness"],
                 chr = config["chr_tag"],
                 h2 = config["HISAT2"]
             threads: workflow.cores
@@ -139,5 +143,5 @@ else:
             shell:
                 """
                 chmod +x {params.shellscript}
-                {params.shellscript} {threads} {wildcards.sample} {params.format} {params.reads} {params.chr} {params.h2} {input} {output}
+                {params.shellscript} {threads} {wildcards.sample} {params.format} {params.strand} {params.chr} {params.h2} {input} {output}
                 """

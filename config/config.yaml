@@ -42,10 +42,9 @@ FORMAT: "PE" # (PE, SE, NU)
                     # [NU - including non-unique] (not tested)
 
 
-# Sequencing reads strandness relative to RNA transcript [depends on library prep and sequencing output]
-READS: "RF" # (FR, RF, F)
-                    # [FR - STL-seq]
-                    # [RF - Clonetech v2]
+# Strandedness of reads
+strandedness: "F" # (F, R); F means read 1 represents original RNA sequence (vs. its reverse complement).
+
 
 # Type of browser tracks to generate
 mut_tracks: "TC" # ("TC", "GA", "TC,GA")

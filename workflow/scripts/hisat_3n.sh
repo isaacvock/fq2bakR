@@ -14,10 +14,12 @@ if [ "$format" = "PE" ]; then
     input1=$9
     input2=${10}
     output=${11}
+    output2=${12}
 
 else
     input=$9
     output=${10}
+    outpu2=${11}
 fi
 
 
@@ -29,34 +31,49 @@ fi
     fi
 
 
-    if [[ "$reads" = "FR" ]]; then
-       $HISAT_3N_PATH \
-            -p "$cpus" \
-            -x $HISAT_3N_INDEX \
-            -1 "$input1" \
-            -2 "$input2" \
-            $( if [ $mut_tracks = GA ]; then echo "--base-change G,A"; else echo "--base-change T,C"; fi ) \
-            $( if [ $chr_tag = 'TRUE' ]; then echo "--add-chrname "; fi ) \
-            --rna-strandness FR \
-            -S "$sample".sam
-    elif [[ "$reads" = "RF" ]]; then
-        $HISAT_3N_PATH \
-            -p "$cpus" \
-            -x $HISAT_3N_INDEX \
-            -1 "$input2" \
-            -2 "$input1" \
-            $( if [ $mut_tracks = GA ]; then echo "--base-change G,A"; else echo "--base-change T,C"; fi ) \
-            $( if [ $chr_tag = 'TRUE' ]; then echo "--add-chrname "; fi ) \
-            --rna-strandness FR \
-            -S "$sample".sam
-    elif [[ "$reads" = "F" ]]; then
-        $HISAT_3N_PATH \
-            -p "$cpus" \
-            -x $HISAT_3N_INDEX \
-            -U "$input1" \
-            $( if [ $mut_tracks = GA ]; then echo "--base-change G,A"; else echo "--base-change T,C"; fi ) \
-            $( if [ $chr_tag = 'TRUE' ]; then echo "--add-chrname "; fi ) \
-            -S "$sample".sam
+    if [[ "$format" = "PE" ]]; then
+        if [[ "$reads" = "F"]]; then
+        
+            $HISAT_3N_PATH \
+                -p "$cpus" \
+                -x $HISAT_3N_INDEX \
+                -1 "$input1" \
+                -2 "$input2" \
+                $( if [ $mut_tracks = GA ]; then echo "--base-change G,A"; else echo "--base-change T,C"; fi ) \
+                $( if [ $chr_tag = 'TRUE' ]; then echo "--add-chrname "; fi ) \
+                --rna-strandness FR \
+                -S "$sample".sam
+        else
+            $HISAT_3N_PATH \
+                -p "$cpus" \
+                -x $HISAT_3N_INDEX \
+                -1 "$input1" \
+                -2 "$input2" \
+                $( if [ $mut_tracks = GA ]; then echo "--base-change G,A"; else echo "--base-change T,C"; fi ) \
+                $( if [ $chr_tag = 'TRUE' ]; then echo "--add-chrname "; fi ) \
+                --rna-strandness RF \
+                -S "$sample".sam
+    elif [[ "$reads" = "SE" ]]; then
+        if [[ "$reads" = "F"]]; then
+
+            $HISAT_3N_PATH \
+                -p "$cpus" \
+                -x $HISAT_3N_INDEX \
+                -U "$input1" \
+                $( if [ $mut_tracks = GA ]; then echo "--base-change G,A"; else echo "--base-change T,C"; fi ) \
+                $( if [ $chr_tag = 'TRUE' ]; then echo "--add-chrname "; fi ) \
+                --rna-strandness F \
+                -S "$sample".sam
+        else
+
+            $HISAT_3N_PATH \
+                -p "$cpus" \
+                -x $HISAT_3N_INDEX \
+                -U "$input1" \
+                $( if [ $mut_tracks = GA ]; then echo "--base-change G,A"; else echo "--base-change T,C"; fi ) \
+                $( if [ $chr_tag = 'TRUE' ]; then echo "--add-chrname "; fi ) \
+                --rna-strandness R \
+                -S "$sample".sam
     else
         echo "! No FR/RF/F method recognized for " $sample
         exit 1
