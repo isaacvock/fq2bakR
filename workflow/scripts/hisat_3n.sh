@@ -37,7 +37,7 @@ fi
 
 
     if [[ "$format" = "PE" ]]; then
-        if [[ "$reads" = "F"]]; then
+        if [[ "$reads" = "F" ]]; then
         
             $HISAT_3N_PATH \
                 -p "$cpus" \
@@ -61,7 +61,7 @@ fi
         fi
 
     elif [[ "$format" = "SE" ]]; then
-        if [[ "$reads" = "F"]]; then
+        if [[ "$reads" = "F" ]]; then
 
             $HISAT_3N_PATH \
                 -p "$cpus" \

@@ -31,7 +31,7 @@ fi
 
 
     if [[ "$format" = "PE" ]]; then
-        if [[ "$reads" = "F"]]; then
+        if [[ "$reads" = "F" ]]; then
         
             hisat2 \
                 -p "$cpus" \
@@ -55,7 +55,7 @@ fi
         fi
 
     elif [[ "$format" = "SE" ]]; then
-        if [[ "$reads" = "F"]]; then
+        if [[ "$reads" = "F" ]]; then
 
             hisat2 \
                 -p "$cpus" \
@@ -78,7 +78,7 @@ fi
                 --mp 4,2 \
                 -S "$output2"
         fi
-        
+
     else
         echo "! No PE/SE FORMAT parameter recognized for " $sample
         exit 1
