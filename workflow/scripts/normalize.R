@@ -31,6 +31,7 @@ args = commandArgs(trailingOnly = TRUE)
 # Set R code printing for debug mode
     options(echo = as.logical(opt$echocode))
 
+    print(opt$dirs)
 
 # Load libraries:
     library(tidyverse)
@@ -55,12 +56,15 @@ args = commandArgs(trailingOnly = TRUE)
 	# dirs <- opt$dirs %>% str_split(',') %>% unlist()
 
 	# Screw it, going to hardcode directory cause I can
-	#dirs <- c(getwd(), "/results/htseq/")
+	dirs <- c(getwd(), "/results/htseq/")
+    print(dirs)
 
 
         samplefiles <- list.files(path = dirs,
                                   pattern = 'mature.*.txt',
                                   recursive = TRUE)
+
+    print(samplefiles)
 
 	## Martin's old code that doesn't work in my workflow
         # samplenames <- gsub(".dir.*", "", samplefiles)
