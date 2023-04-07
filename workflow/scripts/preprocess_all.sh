@@ -16,7 +16,7 @@
 
 if [ "$format" = "PE" ]; then
 
-    output1=$5 # output1
+    output1=$5
     output2=$6
 	adapter1=$7
 	adapter2=$8
@@ -29,12 +29,12 @@ if [ "$format" = "PE" ]; then
     done
 
     # remove duplicate fastq reads:
-            fastuniq \
-                -i <(echo "${fastqs[0]}"; echo "${fastqs[1]}") \
-                -o "$sample"_1u.fastq \
-                -p "$sample"_2u.fastq &&
+            #fastuniq \
+             #   -i <(echo "${fastqs[0]}"; echo "${fastqs[1]}") \
+             #   -o "$sample"_1u.fastq \
+             #   -p "$sample"_2u.fastq &&
 
-             echo "* fastquniq finished for sample " $sample
+             #echo "* fastquniq finished for sample " $sample
 
 
 
@@ -49,13 +49,11 @@ if [ "$format" = "PE" ]; then
                     --cores="$cpus" \
                     -o "$output1" \
                     -p "$output2"\
-                    "$sample"_1u.fastq "$sample"_2u.fastq &&
+                    <(echo "${fastqs[0]}"; echo "${fastqs[1]}") &&
                 echo "* cutadapt finished for " $sample
 
 
 
-            rm "$sample"_1u.fastq
-            rm "$sample"_2u.fastq
 
 
 elif [ "$format" = "SE" ]; then
@@ -79,12 +77,10 @@ elif [ "$format" = "SE" ]; then
                     --minimum-length=20 \
                     --cores="$cpus" \
                     -o "$output1" \
-                    "$sample"_1u.fastq &&
+                    <(echo "${fastqs[0]}") &&
                 echo "* cutadapt finished for " $sample
 
 
-
-            rm "$sample"_1u.fastq
 else
     echo "!!! format must be PE or SE !!!"
 fi
