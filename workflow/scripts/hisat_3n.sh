@@ -23,7 +23,7 @@ else
     outpu2=${12}
 fi
 
-if [[ "$yale" = "TRUE" ]]; then
+if [ $yale ]; then
     module load HISAT-3N
 fi
 
