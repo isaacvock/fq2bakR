@@ -13,13 +13,7 @@ FORMAT = config['FORMAT']
 
 ALIGNER = config['use_hisat3n']
 
-SAMP_NAMES = list(config['samples'].keys())
-
-CPU_num = config['cpus']
-
 PAIRS = [1, 2]
-
-CTL_NAMES = list(config['control_samples'])
 
 nctl = len(CTL_NAMES)
 
