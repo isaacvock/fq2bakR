@@ -39,25 +39,41 @@ rule htseq_cnt:
         chmod +x {params.pythonscript}
         {params.shellscript} {threads} {wildcards.sample} {input} {output} {config[annotation]} {params.strand} {params.pythonscript} 1> {log} 2>&1
         """
-
-rule normalize:
-    input:
-        expand("results/htseq/{sample}_tl.bam", sample = SAMP_NAMES)
-    output:
-        "results/normalization/scale"
-    log:
-        "logs/normalize/normalize.log"
-    params:
-        rscript=workflow.source_path("../scripts/normalize.R")
-    threads: 1
-    conda:
-        "../envs/full.yaml"
-    shell:
-        r"""
-        chmod +x {params.rscript}
-       	{params.rscript} --dirs ./results/htseq/ --spikename {config[spikename]}
-	    mv scale {output}
-        """
+        
+if NORMALIZE:
+    rule normalize:
+        input:
+            expand("results/htseq/{sample}_tl.bam", sample = SAMP_NAMES)
+        output:
+            "results/normalization/scale"
+        log:
+            "logs/normalize/normalize.log"
+        params:
+            rscript=workflow.source_path("../scripts/normalize.R")
+        threads: 1
+        conda:
+            "../envs/full.yaml"
+        shell:
+            r"""
+            chmod +x {params.rscript}
+            {params.rscript} --dirs ./results/htseq/ --spikename {config[spikename]}
+            mv scale {output}
+            """
+else:
+    rule normalize:
+        input:
+            expand("results/htseq/{sample}_tl.bam", sample = SAMP_NAMES)
+        output:
+            "results/normalization/scale"
+        log:
+            "logs/normalize/normalize.log"
+        threads: 1
+        conda:
+            "../envs/full.yaml"
+        shell:
+            """
+            touch {output}
+            """
 
 rule index:
     input:

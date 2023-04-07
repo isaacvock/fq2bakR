@@ -16,6 +16,8 @@ FORMAT = config['FORMAT']
 
 ALIGNER = config['use_hisat3n']
 
+NORMALIZE = config['noramlize']
+
 PAIRS = [1, 2]
 
 nctl = len(CTL_NAMES)
