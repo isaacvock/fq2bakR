@@ -84,6 +84,6 @@ fi
         exit 1
     fi &&
 
-    samtools view -@ "$cpus" -o "$output" "$output2"
+    samtools view -@ "$cpus" -bs "$output2" > "$output"
 
     echo "* Alignment script finished for " $sample
