@@ -23,7 +23,6 @@ if FORMAT == 'PE':
                 "results/fastq_cut/{sample}.t.r2.fastq"
             output:
                 "results/bams/{sample}Aligned.out.bam",
-                "results/bams/{sample}.sam"
             log:
                 "logs/align/{sample}.log"
             params:
@@ -74,7 +73,6 @@ if FORMAT == 'PE':
                 "results/fastq_cut/{sample}.t.r2.fastq"
             output:
                 "results/bams/{sample}Aligned.out.bam",
-                "results/bams/{sample}.sam"
             log:
                 "logs/align/{sample}.log"
             params:
@@ -115,7 +113,6 @@ else:
                 "results/fastq_cut/{sample}.t.fastq",
             output:
                 "results/bams/{sample}Aligned.out.bam",
-                "results/bams/{sample}.sam"
             log:
                 "logs/align/{sample}.log"
             params:
@@ -164,7 +161,6 @@ else:
                 "results/fastq_cut/{sample}.t.fastq",
             output:
                 "results/bams/{sample}Aligned.out.bam",
-                "results/bams/{sample}.sam"
             log:
                 "logs/align/{sample}.log"
             params:

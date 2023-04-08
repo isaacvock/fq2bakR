@@ -13,12 +13,10 @@ if [ "$format" = "PE" ]; then
     input1=$7
     input2=$8
     output=$9
-    outpu2=${10}
 
 else
     input=$7
     output=$8
-    output2=$9
 fi
 
 
@@ -41,7 +39,7 @@ fi
                 $( if [ $chr_tag = 'TRUE' ]; then echo "--add-chrname "; fi ) \
                 --rna-strandness FR \
                 --mp 4,2 \
-                -S "$output2"
+                | samtools view -Sbh -o "$output"
         else
             hisat2 \
                 -p "$cpus" \
@@ -51,7 +49,7 @@ fi
                 $( if [ $chr_tag = 'TRUE' ]; then echo "--add-chrname "; fi ) \
                 --rna-strandness FR \
                 --mp 4,2 \
-                -S "$output2"
+                | samtools view -Sbh -o "$output"
         fi
 
     elif [[ "$format" = "SE" ]]; then
@@ -65,7 +63,7 @@ fi
                 $( if [ $chr_tag = 'TRUE' ]; then echo "--add-chrname "; fi ) \
                 --rna-strandness FR \
                 --mp 4,2 \
-                -S "$output2"
+                | samtools view -Sbh -o "$output"
         else
 
             hisat2 \
@@ -76,14 +74,12 @@ fi
                 $( if [ $chr_tag = 'TRUE' ]; then echo "--add-chrname "; fi ) \
                 --rna-strandness FR \
                 --mp 4,2 \
-                -S "$output2"
+                | samtools view -Sbh -o "$output"
         fi
 
     else
         echo "! No PE/SE FORMAT parameter recognized for " $sample
         exit 1
     fi &&
-
-    samtools view -@ "$cpus" -bs "$output2" > "$output"
 
     echo "* Alignment script finished for " $sample

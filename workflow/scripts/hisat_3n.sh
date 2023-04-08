@@ -15,12 +15,10 @@ if [ "$format" = "PE" ]; then
     input1=${10}
     input2=${11}
     output=${12}
-    output2=${13}
 
 else
     input=${10}
     output=${11}
-    outpu2=${12}
 fi
 
 if [ $yale ]; then
@@ -51,7 +49,7 @@ echo "Temporary directory is $TMPDIR"
                 $( if [ $mut_tracks = GA ]; then echo "--base-change G,A"; else echo "--base-change T,C"; fi ) \
                 $( if [ $chr_tag = 'TRUE' ]; then echo "--add-chrname "; fi ) \
                 --rna-strandness FR \
-                -S "$output2"
+                | samtools view -Sbh -o "$output"
         else
             $HISAT_3N_PATH \
                 -p "$cpus" \
@@ -61,7 +59,7 @@ echo "Temporary directory is $TMPDIR"
                 $( if [ $mut_tracks = GA ]; then echo "--base-change G,A"; else echo "--base-change T,C"; fi ) \
                 $( if [ $chr_tag = 'TRUE' ]; then echo "--add-chrname "; fi ) \
                 --rna-strandness RF \
-                -S "$output2"
+                | samtools view -Sbh -o "$output"
         fi
 
     elif [[ "$format" = "SE" ]]; then
@@ -74,7 +72,7 @@ echo "Temporary directory is $TMPDIR"
                 $( if [ $mut_tracks = GA ]; then echo "--base-change G,A"; else echo "--base-change T,C"; fi ) \
                 $( if [ $chr_tag = 'TRUE' ]; then echo "--add-chrname "; fi ) \
                 --rna-strandness F \
-                -S "$output2"
+                | samtools view -Sbh -o "$output"
         else
 
             $HISAT_3N_PATH \
@@ -84,7 +82,7 @@ echo "Temporary directory is $TMPDIR"
                 $( if [ $mut_tracks = GA ]; then echo "--base-change G,A"; else echo "--base-change T,C"; fi ) \
                 $( if [ $chr_tag = 'TRUE' ]; then echo "--add-chrname "; fi ) \
                 --rna-strandness R \
-                -S "$output2"
+                | samtools view -Sbh -o "$output"
 
         fi
     else
@@ -92,7 +90,5 @@ echo "Temporary directory is $TMPDIR"
         exit 1
     fi &&
 
-
-    samtools view -@ "$cpus" -b "$output2" > "$output"
 
     echo "* Alignment script finished for " $sample
