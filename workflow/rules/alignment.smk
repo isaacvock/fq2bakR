@@ -67,28 +67,42 @@ if FORMAT == 'PE':
                 "../scripts/star-align.py"
 
     else:
+       # rule align:
+           # input:
+           #     "results/fastq_cut/{sample}.t.r1.fastq",
+           #     "results/fastq_cut/{sample}.t.r2.fastq"
+           # output:
+           #     "results/bams/{sample}Aligned.out.bam",
+           # log:
+           #     "logs/align/{sample}.log"
+           # params:
+           #     shellscript = workflow.source_path("../scripts/hisat2.sh"),
+           #     format = config["FORMAT"],
+           #     strand = config["strandedness"],
+           #     chr = config["chr_tag"],
+           #     h2 = config["HISAT2"]
+           # threads: workflow.cores
+           # conda:
+           #     "../envs/full.yaml"
+           # shell:
+           #     """
+           #     chmod +x {params.shellscript}
+           #     {params.shellscript} {threads} {wildcards.sample} {params.format} {params.strand} {params.chr} {params.h2} {input} {output} 1> {log} 2>&1
+           #     """
+        
         rule align:
             input:
-                "results/fastq_cut/{sample}.t.r1.fastq",
-                "results/fastq_cut/{sample}.t.r2.fastq"
+                reads=["results/fastq_cut/{sample}.t.r1.fastq", "results/fastq_cut/{sample}.t.r2.fastq"],
+                idx=config["HISAT2"],
             output:
                 "results/bams/{sample}Aligned.out.bam",
             log:
-                "logs/align/{sample}.log"
+                "logs/hisat2_align/{sample}.log",
             params:
-                shellscript = workflow.source_path("../scripts/hisat2.sh"),
-                format = config["FORMAT"],
-                strand = config["strandedness"],
-                chr = config["chr_tag"],
-                h2 = config["HISAT2"]
+                extra="",
             threads: workflow.cores
-            conda:
-                "../envs/full.yaml"
-            shell:
-                """
-                chmod +x {params.shellscript}
-                {params.shellscript} {threads} {wildcards.sample} {params.format} {params.strand} {params.chr} {params.h2} {input} {output} 1> {log} 2>&1
-                """
+            wrapper:
+                "v1.25.0/bio/hisat2/align"
 
 else:
 
