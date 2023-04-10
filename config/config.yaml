@@ -79,6 +79,9 @@ hisat2_extra: ""
 # Optional code to pass to cutadapt
 cutadapt_extra: "--minimum-length 20"
 
+# Optional code to pass to picard markduplicates
+picard_extra: "--REMOVE_DUPLICATES true"
+
 # String common to spike-in gene_ids in annotation gtf
   # If you have no spike-ins, then this should be "\"\"", i.e., an empty string ("")
 spikename: "\"\""

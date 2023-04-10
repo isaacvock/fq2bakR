@@ -84,7 +84,7 @@ if FORMAT == 'PE':
                 ),
             conda:
                 "../envs/star.yaml"
-            threads: 24
+            threads: 36
             script: 
                 "../scripts/star-align.py"
 
