@@ -1,3 +1,20 @@
+## Create STAR index if not available
+if config['build_star']:
+    rule star_index:
+        input:
+            fasta=config["genome_fasta"],
+            annotation=config["annotation"],
+        output:
+            directory(config['STAR_index']),
+        threads: 4
+        params:
+            extra="--sjdbGTFfile {} --sjdbOverhang 100".format(str(config["annotation"])),
+        log:
+            "logs/star_index_genome.log",
+        wrapper:
+            "v1.25.0/bio/star/index"
+
+
 ## Paired-end reads
 if FORMAT == 'PE':
 
@@ -48,6 +65,7 @@ if FORMAT == 'PE':
 
     # Run STAR
     elif STAR:
+
         rule align:
             input:
                 fq1 = "results/fastq_cut/{sample}.t.r1.fastq",

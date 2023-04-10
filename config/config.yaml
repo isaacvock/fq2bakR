@@ -35,6 +35,9 @@ use_hisat3n: False
 # If TRUE STAR will be used for alignment;  if hisat-3n is also TRUE, hisat-3n will be used and not STAR
 use_star: False
 
+# If TRUE, index will be built for star and directory will be created at path set in STAR_index parameter
+build_star: True
+
 # If use_hisat3n TRUE, then this specifies path to hisat_3n executable
 hisat3n_path: hisat-3n
   # If hisat-3n is on your PATH, this will just be hisat-3n
