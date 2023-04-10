@@ -67,14 +67,14 @@ minqual: 40
 # Which columns to keep in final cB.csv.gz file
 keepcols: "sample,sj,io,ei,ai,GF,XF,rname"
 
-# code specifying adapters to be trimeed that will be passed to cutadapt
+# code specifying adapters to be trimmed that will be passed to cutadapt
 adapter: "-a AGATCGGAAGAGC -A AGATCGGAAGAGC"
 
 # Extra parameters to be passed to STAR
-star_extra: ""
+star_extra: "--outFilterMismatchNmax 20"
 
-# Extra parameters to be passed to STAR
-hisat2_extra: ""
+# Extra parameters to be passed to Hisat2
+hisat2_extra: "--mp 1,0"
 
 # Optional code to pass to cutadapt
 cutadapt_extra: "--minimum-length 20"
