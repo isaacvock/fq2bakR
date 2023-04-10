@@ -1,24 +1,7 @@
-# Flag PCR duplicates; also can remove them if passed appropriate additional parameters
-rule mark_duplicates:
-    input:
-        "results/bams/{sample}Aligned.out.bam",
-    output:
-        bam="results/dedup/{sample}.bam"
-        metrics="results/dedup/{sample}.metrics.txt",
-    log:
-        "logs/picard/{sample}.log",
-    params:
-        extra=config['picard_extra'],
-    resources:
-        mem_mb=1024,
-    wrapper:
-        "v1.25.0/bio/picard/markduplicates"
-
-
 # Filter out multi-mappers and sort reads
 rule sort_filter:
     input:
-        "results/dedup/{sample}.bam"
+        "results/bams/{sample}Aligned.out.bam"
     output:
         "results/sf_reads/{sample}.s.sam",
         "results/sf_reads/{sample}_fixed_mate.bam",
