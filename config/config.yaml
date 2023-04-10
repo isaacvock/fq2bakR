@@ -10,18 +10,18 @@ samples:
   KO_ctl: data/fastq/KO_ctl
 
 # location of annotation gtf file
-annotation: data/annotation/mini_GRCh38.gtf
+annotation: data/annotation/GRCh38.gtf
 
 # -s4U control sample IDs
 control_samples: ['WT_ctl', 'KO_ctl']
 
 # location of genome fasta file
-genome_fasta: data/genome/Homo_sapiens.GRCh38.dna.chr.fa
+genome_fasta: data/genome/GRCh38.fa
 
-# location of hisat2 indices
-HISAT2: data/hisat2/grch38_tran/genome_tran
+# location of hisat2 indices (directory containing indices)
+HISAT2: data/hisat2/grch38_tran/
 
-# location of hisat3n indices
+# location of hisat3n indices (path to and common prefix of all .ht2 files)
 HISAT_3N: data/hisat_3n/GRCh38
 
 # location of STAR indices
@@ -64,14 +64,17 @@ minqual: 40
 # Which columns to keep in final cB.csv.gz file
 keepcols: "sample,sj,io,ei,ai,GF,XF,rname"
 
-# code that will be passed to cutadapt
+# code specifying adapters to be trimeed that will be passed to cutadapt
 adapter: "-a AGATCGGAAGAGC -A AGATCGGAAGAGC"
 
 # Extra parameters to be passed to STAR
-star: ""
+star_extra: ""
+
+# Extra parameters to be passed to STAR
+hisat2_extra: ""
 
 # Optional code to pass to cutadapt
-extra: "--minimum-length 20"
+cutadapt_extra: "--minimum-length 20"
 
 # String common to spike-in gene_ids in annotation gtf
   # If you have no spike-ins, then this should be "\"\"", i.e., an empty string ("")

@@ -1,11 +1,11 @@
 import glob
-import os
 
 SAMP_NAMES = list(config['samples'].keys())
 
 CTL_NAMES = list(config['control_samples'])
 
 nctl = len(CTL_NAMES)
+nsamps = len(SAMP_NAMES)
 
 def get_index_name():
     genome = config["genome_fasta"]
@@ -21,8 +21,6 @@ STAR = config['use_star']
 NORMALIZE = config['normalize']
 
 PAIRS = [1, 2]
-
-nctl = len(CTL_NAMES)
 
 def get_input_fastqs(wildcards):
     fastq_path = config["samples"][wildcards.sample]
