@@ -92,7 +92,7 @@ if FORMAT == 'PE':
         
         rule align:
             input:
-                reads=["results/fastq_cut/{sample}.t.r1.fastq", "results/fastq_cut/{sample}.t.r2.fastq"],
+                reads=expand("results/fastq_cut/{{sample}}.t.{read}.fastq}", read = ["r1", "r2"]),
                 idx=config["HISAT2"],
             output:
                 "results/bams/{sample}Aligned.out.bam",
