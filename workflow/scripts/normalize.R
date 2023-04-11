@@ -64,8 +64,6 @@ args = commandArgs(trailingOnly = TRUE)
                                   pattern = 'mature.*.txt',
                                   recursive = TRUE)
 
-    print(samplefiles)
-
 	## Martin's old code that doesn't work in my workflow
         # samplenames <- gsub(".dir.*", "", samplefiles)
         samplenames <- paste0(dirs, samplefiles)

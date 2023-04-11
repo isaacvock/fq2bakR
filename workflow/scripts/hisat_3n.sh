@@ -27,8 +27,6 @@ if [ $yale ]; then
     module load HISAT-3N
 fi
 
-echo "Temporary directory is $TMPDIR"
-
 
 
     echo "* Aligning reads with HISAT-3n for sample $sample"
