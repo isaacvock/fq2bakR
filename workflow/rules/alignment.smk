@@ -189,7 +189,7 @@ else:
                 "logs/bams/{sample}.log",
             params:
                 idx=lambda wc, input: input.index,
-                extra="--outSAMtype BAM SortedByCoordinate --outFilterMismatchNmax 23 --outSAMattributes NH HI AS NM MD --quantMode TranscriptomeSAM GeneCounts --sjdbGTFfile {} {}".format(
+                extra="--outSAMtype BAM SortedByCoordinate --outSAMattributes NH HI AS NM MD --quantMode TranscriptomeSAM GeneCounts --sjdbGTFfile {} {}".format(
                     str(config["annotation"]), config["star_extra"]
                 ),
             conda:
