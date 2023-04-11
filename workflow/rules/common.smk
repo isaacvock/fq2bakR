@@ -22,6 +22,9 @@ NORMALIZE = config['normalize']
 
 PAIRS = [1, 2]
 
+def get_input_bams(wildcards):
+    return config["samples"][wildcards.sample]
+
 def get_input_fastqs(wildcards):
     fastq_path = config["samples"][wildcards.sample]
     fastq_files = sorted(glob.glob(f"{fastq_path}/*.fastq*"))

@@ -1,23 +1,46 @@
-# Filter out multi-mappers and sort reads
-rule sort_filter:
-    input:
-        "results/bams/{sample}Aligned.out.bam"
-    output:
-        "results/sf_reads/{sample}.s.sam",
-        "results/sf_reads/{sample}_fixed_mate.bam",
-        "results/sf_reads/{sample}.f.sam",
-    log:
-        "logs/sort_filter/{sample}.log"
-    params: 
-        shellscript=workflow.source_path("../scripts/sort_filter.sh")
-    threads: 8
-    conda:
-        "../envs/full.yaml"
-    shell:
-        """
-        chmod +x {params.shellscript}
-        {params.shellscript} {threads} {wildcards.sample} {input} {output} {config[FORMAT]} 1> {log} 2>&1
-        """
+
+if config["bam2bakr"]:
+    # Filter out multi-mappers and sort reads
+    rule sort_filter:
+        input:
+            get_input_bams
+        output:
+            "results/sf_reads/{sample}.s.sam",
+            "results/sf_reads/{sample}_fixed_mate.bam",
+            "results/sf_reads/{sample}.f.sam",
+        log:
+            "logs/sort_filter/{sample}.log"
+        params: 
+            shellscript=workflow.source_path("../scripts/sort_filter.sh")
+        threads: 8
+        conda:
+            "../envs/full.yaml"
+        shell:
+            """
+            chmod +x {params.shellscript}
+            {params.shellscript} {threads} {wildcards.sample} {input} {output} {config[FORMAT]} 1> {log} 2>&1
+            """
+else:
+    # Filter out multi-mappers and sort reads
+    rule sort_filter:
+        input:
+            "results/bams/{sample}Aligned.out.bam"
+        output:
+            "results/sf_reads/{sample}.s.sam",
+            "results/sf_reads/{sample}_fixed_mate.bam",
+            "results/sf_reads/{sample}.f.sam",
+        log:
+            "logs/sort_filter/{sample}.log"
+        params: 
+            shellscript=workflow.source_path("../scripts/sort_filter.sh")
+        threads: 8
+        conda:
+            "../envs/full.yaml"
+        shell:
+            """
+            chmod +x {params.shellscript}
+            {params.shellscript} {threads} {wildcards.sample} {input} {output} {config[FORMAT]} 1> {log} 2>&1
+            """
 
 # Use custom htseq script to quanity features 
 # Also creates bam files with tag designating feature that each read was mapped to; useful during mutation counting

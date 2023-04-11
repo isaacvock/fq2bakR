@@ -29,9 +29,14 @@ container: "docker://continuumio/miniconda3"
 
 ##### load rules #####
 
-include: "rules/common.smk"
-include: "rules/alignment.smk"
-include: "rules/bam2bakr.smk"
+if config["bam2bakr"]:
+    include: "rules/common.smk"
+    include: "rules/bam2bakr.smk"
+else:
+    include: "rules/common.smk"
+    include: "rules/alignment.smk"
+    include: "rules/bam2bakr.smk"
+
 
 
 ##### target rules #####
@@ -40,73 +45,3 @@ rule all:
     input:
         "results/cB/cB.csv.gz",
         expand("results/tracks/{sample}.{mut}.{id}.{strand}.tdf", sample = SAMP_NAMES, mut=config["mut_tracks"], id=[0,1,2,3,4,5], strand = ['pos', 'min']) 
-
-
-
-#rule sort_filter:
-#    input:
-#        "results/bams/{sample}Aligned.out.bam"
-#    output:
-#        "results/sf_reads/{sample}.s.sam"
-#    log:
-#        "logs/sort_filter/{sample}.log"
-#    threads: CPU_num
-#    shell:
-#        "workflow/scripts/sort_filter.sh {config[cpus]} {wildcards.sample} {input} {output} {config[FORMAT]}"
-
-#rule htseq_cnt:
-#    input:
-#        "results/sf_reads/{sample}.s.sam"
-#    output:
-#        "results/htseq_cnt/{sample}_tl.bam"
-#    log:
-#        "logs/htseq_cnt/{sample}.log"
-#    threads: CPU_num
-#    shell:
-#        "workflow/scripts/htseq.sh {config[cpus]} {wildcards.sample} {input} {output} {config[annotation]} {config[mutcnt]}"
-
-#rule call_snps:
-#    input:
-#        expand("results/htseq_cnt/{ctl}_tl.bam", ctl = CTL_NAMES)
-#    params:
-#        nsamps = nctl
-#    output:
-#        "results/snps/snp.txt"
-#    log:
-#        "logs/call_snps/ctl_samps.log"
-#    threads: CPU_num
-#    shell:
-#        "workflow/scripts/call_snps.sh {config[cpus]} {params.nsamps} {output} {config[genome_fasta]} {input}"
-
-#rule cnt_muts:
-#    input:
-#        "results/htseq_cnt/{sample}_tl.bam",
-#        "results/snps/snp.txt"
-#    output:
-#        "results/counts/{sample}_counts.csv.gz"
-#    log:
-#        "logs/fragment_bam/{sample}.log"
-#    threads: CPU_num
-#    shell:
-#        "workflow/scripts/fragment.sh {config[cpus]} {wildcards.sample} {input} {output} {config[awkscript]} {config[fragment_size]} {config[minqual]} {config[mut_tracks]} {config[mutcall]} {config[FORMAT]}"
-
-# rule maketdf:
-#    input:
-#        "results/counts/{sample}_counts.csv.gz",
-#        "results/htseq_cnt/{sample}_tl.bam"
-#    output:
-#        "results/tracks/{sample}_success.txt"
-#    threads: CPU_num
-#    shell:
-#        "workflow/scripts/tracks.sh {config[cpus]} {wildcards.sample} {input} {config[mut_tracks]} {output} {config[genome_fasta]} {config[WSL]}"
-
-#rule makecB:
-#    input:
-#        expand("results/counts/{sample}_counts.csv.gz", sample=SAMP_NAMES)
-#    output:
-#        "results/cB/cB.csv.gz"
-#    log:
-#        "logs/makecB/master.log"
-#    threads: CPU_num
-#    shell:
-#        "workflow/scripts/master.sh {config[cpus]} {output} {config[keepcols]} {config[mut_tracks]}"

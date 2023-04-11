@@ -1,6 +1,10 @@
-### Parameters you MUST set
+##### Parameters you will likely have to change #####
 
-# path to directory containing fastq files
+# Run bam2bakR only? If true, will expect bam files as input and alignment steps will be skipped
+bam2bakr: False
+
+# path to directory containing fastq files if bam2bakr is False
+# path to bam files if bam2bakr is True
 samples:
   WT_1: data/fastq/WT_1
   WT_2: data/fastq/WT_2
@@ -18,32 +22,7 @@ control_samples: ['WT_ctl', 'KO_ctl']
 # location of genome fasta file
 genome_fasta: data/genome/GRCh38.fa
 
-# location of hisat2 indices (directory containing indices)
-HISAT2: data/hisat2/grch38_tran/
-
-# location of hisat3n indices (path to and common prefix of all .ht2 files)
-HISAT_3N: data/hisat_3n/GRCh38
-
-# location of STAR indices
-STAR_index: data/star/
-
-### Parameters you should probably double check
-
-# If TRUE, hisat-3n will be used for alignment
-use_hisat3n: False
-
-# If TRUE STAR will be used for alignment;  if hisat-3n is also TRUE, hisat-3n will be used and not STAR
-use_star: False
-
-# If TRUE, index will be built for star and directory will be created at path set in STAR_index parameter
-build_star: True
-
-# If use_hisat3n TRUE, then this specifies path to hisat_3n executable
-hisat3n_path: hisat-3n
-  # If hisat-3n is on your PATH, this will just be hisat-3n
-
-# Are you on Yale's HPC where hisat-3n can be loaded as a module using LMOD system?
-Yale: True
+##### Parameters that are always relevant #####
 
 # Format of reads
 FORMAT: "PE" # (PE, SE, NU)
@@ -67,6 +46,44 @@ minqual: 40
 # Which columns to keep in final cB.csv.gz file
 keepcols: "sample,sj,io,ei,ai,GF,XF,rname"
 
+# String common to spike-in gene_ids in annotation gtf
+  # If you have no spike-ins, then this should be "\"\"", i.e., an empty string ("")
+spikename: "\"\""
+
+# If True, tracks will be normalized
+normalize: True
+
+# Are you using the Windows subsystem for linux? 0 = Yes, 1 = No
+WSL: 1
+
+
+##### Parameters that are only relevant if bam2bakr is False #####
+
+# location of hisat2 indices (directory containing indices)
+HISAT2: data/hisat2/grch38_tran/
+
+# location of hisat3n indices (path to and common prefix of all .ht2 files)
+HISAT_3N: data/hisat_3n/GRCh38
+
+# location of STAR indices
+STAR_index: data/star/
+
+# If TRUE, hisat-3n will be used for alignment
+use_hisat3n: False
+
+# If TRUE STAR will be used for alignment;  if hisat-3n is also TRUE, hisat-3n will be used and not STAR
+use_star: False
+
+# If TRUE, index will be built for star and directory will be created at path set in STAR_index parameter
+build_star: True
+
+# If use_hisat3n TRUE, then this specifies path to hisat_3n executable
+hisat3n_path: hisat-3n
+  # If hisat-3n is on your PATH, this will just be hisat-3n
+
+# Are you on Yale's HPC where hisat-3n can be loaded as a module using LMOD system?
+Yale: True
+
 # code specifying adapters to be trimmed that will be passed to cutadapt
 adapter: "-a AGATCGGAAGAGC -A AGATCGGAAGAGC"
 
@@ -79,12 +96,3 @@ hisat2_extra: "--mp 1,0"
 # Optional code to pass to cutadapt
 cutadapt_extra: "--minimum-length 20"
 
-# String common to spike-in gene_ids in annotation gtf
-  # If you have no spike-ins, then this should be "\"\"", i.e., an empty string ("")
-spikename: "\"\""
-
-# If True, tracks will be normalized
-normalize: True
-
-# Are you using the Windows subsystem for linux? 0 = Yes, 1 = No
-WSL: 1
