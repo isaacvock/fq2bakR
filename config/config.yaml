@@ -75,7 +75,7 @@ use_hisat3n: False
 use_star: False
 
 # If TRUE, index will be built for star and directory will be created at path set in STAR_index parameter
-build_star: True
+build_star: False
 
 # If use_hisat3n TRUE, then this specifies path to hisat_3n executable
 hisat3n_path: hisat-3n

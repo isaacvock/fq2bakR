@@ -17,7 +17,7 @@ if [ "$format" = "PE" ]; then
     output=${12}
 
 else
-    input=${10}
+    input1=${10}
     output=${11}
 fi
 
