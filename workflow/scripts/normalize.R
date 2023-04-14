@@ -55,7 +55,7 @@ args = commandArgs(trailingOnly = TRUE)
 	# dirs <- opt$dirs %>% str_split(',') %>% unlist()
 
 	# Screw it, going to hardcode directory cause I can
-	dirs <- c(getwd(), "/results/bams/")
+	dirs <- c(getwd(), "/results/htseq/")
     paste(dirs)
 
         samplefiles <- list.files(path = dirs,
