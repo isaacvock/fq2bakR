@@ -75,13 +75,13 @@ args = commandArgs(trailingOnly = TRUE)
     print(snames)
     # Loop through the samples to load them:
 
-    for (i in seq_along(samplefiles)){
+    for (i in seq_along(samplenames)){
 
-        df <- read_tsv(samplefiles[i],
+        df <- read_tsv(samplenames[i],
                        col_names = c('gene', 'count'),
                        col_types = 'ci')
 
-        df$sample <- paste0(samplenames[i])
+        df$sample <- paste0(snames[i])
 
         master <- rbind(master, df)
 
