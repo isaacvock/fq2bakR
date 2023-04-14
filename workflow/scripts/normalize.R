@@ -66,11 +66,13 @@ args = commandArgs(trailingOnly = TRUE)
         # samplenames <- gsub(".dir.*", "", samplefiles)
         samplenames <- paste0(dirs, samplefiles)
 
+    print(samplenames)
 	# Actual sample name wildcards
 	snames <- gsub(".*mature.|_htseq.*", "", samplefiles)
 	#snames <- gsub("htseq*", "", snames)
 
 
+    print(snames)
     # Loop through the samples to load them:
 
     for (i in seq_along(samplefiles)){
@@ -108,6 +110,8 @@ args = commandArgs(trailingOnly = TRUE)
     rownames(m) <- unlist(rnames)
     # head(m, 20)
 
+    print(rnames)
+
 # Correlation analysis
     #cor(m)
 
@@ -130,6 +134,8 @@ if (sum(is.finite(scale)) == length(scale)){
 
     sdf <- tibble(sample = snames,
                   scale = x)
+
+    print(sdf)
 
     write.table(sdf, file = 'scale',
                      quote = FALSE,
