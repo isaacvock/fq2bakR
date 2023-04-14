@@ -74,6 +74,18 @@ for line in snpFile:
     line = line.strip().split(':')
     snp[line[2] + ':' + line[3]] = line[0] + ':' + line[1]
 
+# Create files for tracks
+if args.tracks:
+    # Create output files names
+    fileName = []
+    for mt in args.mutType:
+        for i in range(0,6):
+            fileName.append('_'.join([inputName, mt, str(i), 'reads.txt']))
+
+    # Open all files for writing
+    fs = []
+    for f in fileName:
+        fs.append(open(f, 'w'))
 
 
 
@@ -231,9 +243,9 @@ print('end: ' + str(datetime.datetime.now()))
 ##### Close files ######
 myfile.close()
 
-# if args.tracks:
-    # for f in fs:
-        # f.close()
+if args.tracks:
+    for f in fs:
+        f.close()
 
 ##### Generate Output ######
 
