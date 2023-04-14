@@ -56,11 +56,11 @@ args = commandArgs(trailingOnly = TRUE)
 
 	# Screw it, going to hardcode directory cause I can
 	dirs <- c(getwd(), "/results/bams/")
-
+    paste(dirs)
 
         samplefiles <- list.files(path = dirs,
                                   pattern = 'mature.*.txt',
-                                  recursive = TRUE)
+                                  recursive = FALSE)
 
 	## Martin's old code that doesn't work in my workflow
         # samplenames <- gsub(".dir.*", "", samplefiles)
