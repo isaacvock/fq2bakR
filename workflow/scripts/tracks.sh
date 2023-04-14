@@ -183,11 +183,11 @@ output=${11}
     rm -f igv.log
 
 
-    rm ./results/tracks/"$sample"*.bam
-    rm ./results/tracks/"$sample"*_reads.txt
-    rm ./results/tracks/"$sample"*.bedGraph
-    rm ./results/tracks/"$sample"*.bai
-    rm ./results/tracks/"$sample"*.out
+    #rm ./results/tracks/"$sample"*.bam
+    #rm ./results/tracks/"$sample"*_reads.txt
+    #rm ./results/tracks/"$sample"*.bedGraph
+    #rm ./results/tracks/"$sample"*.bai
+    #rm ./results/tracks/"$sample"*.out
     # rm -f "$sample"*.chrom.sizes
     #rm -f igv*
 
