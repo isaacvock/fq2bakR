@@ -53,7 +53,7 @@ rule htseq_cnt:
     params: 
         shellscript=workflow.source_path("../scripts/htseq.sh"),
         pythonscript=workflow.source_path("../scripts/count_triple.py"),
-        strand=config["strandedness"]
+        strand=config["strandedness"],
         flattened=config["flattened"]
     log:
         "logs/htseq_cnt/{sample}.log"
