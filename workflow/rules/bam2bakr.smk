@@ -54,6 +54,7 @@ rule htseq_cnt:
         shellscript=workflow.source_path("../scripts/htseq.sh"),
         pythonscript=workflow.source_path("../scripts/count_triple.py"),
         strand=config["strandedness"]
+        flattened=config["flattened"]
     log:
         "logs/htseq_cnt/{sample}.log"
     threads: workflow.cores
@@ -63,7 +64,7 @@ rule htseq_cnt:
         """
         chmod +x {params.shellscript}
         chmod +x {params.pythonscript}
-        {params.shellscript} {threads} {wildcards.sample} {input} {output} {config[annotation]} {params.strand} {params.pythonscript} 1> {log} 2>&1
+        {params.shellscript} {threads} {wildcards.sample} {input} {output} {config[annotation]} {params.strand} {params.pythonscript} {params.flattened} 1> {log} 2>&1
         """
 
 # Calculate normalization scale factor to be applied to tracks        

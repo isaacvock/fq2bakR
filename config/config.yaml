@@ -85,6 +85,9 @@ hisat3n_path: hisat-3n
 # Are you on Yale's HPC where hisat-3n can be loaded as a module using Lmod system?
 Yale: True
 
+# Are you using a flattened annotation from FlatStacks?
+flattend: True
+
 # code specifying adapters to be trimmed that will be passed to cutadapt
 adapter: "-a AGATCGGAAGAGC -A AGATCGGAAGAGC"
 
