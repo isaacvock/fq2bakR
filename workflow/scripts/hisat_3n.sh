@@ -31,7 +31,7 @@ fi
 
     echo "* Aligning reads with HISAT-3n for sample $sample"
 
-    if [ "$chr_tag" = "TRUE" ]; then
+    if [ "$chr_tag" = 'True' ]; then
         echo "* chr tag will be included in alignment for " $sample
     fi
 
@@ -45,7 +45,7 @@ fi
                 -1 "$input1" \
                 -2 "$input2" \
                 $( if [ $mut_tracks = GA ]; then echo "--base-change G,A"; else echo "--base-change T,C"; fi ) \
-                $( if [ $chr_tag = 'TRUE' ]; then echo "--add-chrname "; fi ) \
+                $( if [ "$chr_tag" = 'True' ]; then echo "--add-chrname "; fi ) \
                 --rna-strandness FR \
                 | samtools view -Sbh -o "$output"
         else
@@ -55,7 +55,7 @@ fi
                 -1 "$input1" \
                 -2 "$input2" \
                 $( if [ $mut_tracks = GA ]; then echo "--base-change G,A"; else echo "--base-change T,C"; fi ) \
-                $( if [ $chr_tag = 'TRUE' ]; then echo "--add-chrname "; fi ) \
+                $( if [ "$chr_tag" = 'True' ]; then echo "--add-chrname "; fi ) \
                 --rna-strandness RF \
                 | samtools view -Sbh -o "$output"
         fi
@@ -68,7 +68,7 @@ fi
                 -x $HISAT_3N_INDEX \
                 -U "$input1" \
                 $( if [ $mut_tracks = GA ]; then echo "--base-change G,A"; else echo "--base-change T,C"; fi ) \
-                $( if [ $chr_tag = 'TRUE' ]; then echo "--add-chrname "; fi ) \
+                $( if [ "$chr_tag" = 'True' ]; then echo "--add-chrname "; fi ) \
                 --rna-strandness F \
                 | samtools view -Sbh -o "$output"
         else
@@ -78,7 +78,7 @@ fi
                 -x $HISAT_3N_INDEX \
                 -U "$input1" \
                 $( if [ $mut_tracks = GA ]; then echo "--base-change G,A"; else echo "--base-change T,C"; fi ) \
-                $( if [ $chr_tag = 'TRUE' ]; then echo "--add-chrname "; fi ) \
+                $( if [ "$chr_tag" = 'True' ]; then echo "--add-chrname "; fi ) \
                 --rna-strandness R \
                 | samtools view -Sbh -o "$output"
 
