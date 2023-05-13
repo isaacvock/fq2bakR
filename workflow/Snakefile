@@ -41,7 +41,15 @@ else:
 
 ##### target rules #####
 
-rule all:
-    input:
-        "results/cB/cB.csv.gz",
-        expand("results/tracks/{sample}.{mut}.{id}.{strand}.tdf", sample = SAMP_NAMES, mut=config["mut_tracks"], id=[0,1,2,3,4,5], strand = ['pos', 'min']) 
+if config['use_star']:
+    rule all:
+        input:
+            "results/cB/cB.csv.gz",
+            expand("results/tracks/{sample}.{mut}.{id}.{strand}.tdf", sample = SAMP_NAMES, mut=config["mut_tracks"], id=[0,1,2,3,4,5], strand = ['pos', 'min']), 
+            expand("results/rsem/{sample}.genes.results", sample = SAMP_NAMES),
+            expand("results/rsem/{sample}.isoforms.results", sample = SAMP_NAMES)
+else:
+    rule all:
+        input:
+            "results/cB/cB.csv.gz",
+            expand("results/tracks/{sample}.{mut}.{id}.{strand}.tdf", sample = SAMP_NAMES, mut=config["mut_tracks"], id=[0,1,2,3,4,5], strand = ['pos', 'min']) 

@@ -198,6 +198,43 @@ else:
             script: 
                 "../scripts/star-align.py"
 
+        rule RSEM_index:
+            input:
+                reference_genome=config['genome_fasta'],
+            output:
+                seq="index/reference.seq",
+                grp="index/reference.grp",
+                ti="index/reference.ti",
+                tfa="index/reference.transcripts.fa",
+                idxfa="index/reference.idx.fa",
+                n2g="index/reference.n2g.idx.fa",
+            params:
+                extra="--gtf {}".format(str(config["annotation"])),
+            log:
+                "logs/rsem/prepare-reference.log",
+            threads: 36
+            wrapper:
+                "v1.23.4/bio/rsem/prepare-reference"
+
+        rule RSEM:
+            input:
+                bam="results/bams/{sample}-Aligned.toTranscriptome.out.bam",
+                reference=multiext("index/reference", ".grp", ".ti", ".transcripts.fa", ".seq", ".idx.fa", ".n2g.idx.fa"),
+            output:
+                genes_results="results/rsem/{sample}.genes.results",
+                isoforms_results="results/rsem/{sample}.isoforms.results",
+            params:
+                # optional, specify if sequencing is paired-end
+                paired_end=lambda wildcards: True if config['FORMAT'] == "PE" else False,
+                # additional optional parameters to pass to rsem, for example,
+            log:
+                "logs/rsem/calculate_expression/{sample}.log",
+            conda:
+                "../envs/rsem.yaml"
+            threads: 36
+            script:
+                "../scripts/rsem-calc.py"
+
     # Run hisat2
     else:
         ## Old way of running hisat2 with custom script
