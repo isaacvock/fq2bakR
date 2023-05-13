@@ -88,6 +88,25 @@ if FORMAT == 'PE':
             script: 
                 "../scripts/star-align.py"
 
+        rule RSEM:
+            input:
+                bam="results/bams/{sample}-Aligned.toTranscriptome.out.bam",
+                reference=multiext("index/reference", ".grp", ".ti", ".transcripts.fa", ".seq", ".idx.fa", ".n2g.idx.fa"),
+            output:
+                genes_results="results/rsem/{sample}.genes.results",
+                isoforms_results="results/rsem/{sample}.isoforms.results",
+            params:
+                # optional, specify if sequencing is paired-end
+                paired_end= True,
+                # additional optional parameters to pass to rsem, for example,
+            log:
+                "logs/rsem/calculate_expression/{sample}.log",
+            conda:
+                "../envs/rsem.yaml"
+            threads: 36
+            script:
+                "../scripts/rsem-calc.py"
+
     # Run hisat2
     else:
         ## Old way of running hisat2 with custom script
@@ -225,7 +244,7 @@ else:
                 isoforms_results="results/rsem/{sample}.isoforms.results",
             params:
                 # optional, specify if sequencing is paired-end
-                paired_end=lambda wildcards: True if config['FORMAT'] == "PE" else False,
+                paired_end= False,
                 # additional optional parameters to pass to rsem, for example,
             log:
                 "logs/rsem/calculate_expression/{sample}.log",

@@ -41,7 +41,7 @@ else:
 
 ##### target rules #####
 
-if config['use_star']:
+if STAR:
     rule all:
         input:
             "results/cB/cB.csv.gz",
