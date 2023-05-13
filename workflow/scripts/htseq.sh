@@ -11,6 +11,8 @@ strand=$7
 count_script=$8
 flattened=$9
 
+echo $flattened
+
 if [ "$strand" = "F" ]; then
 
     strand="yes"
@@ -25,7 +27,7 @@ fi
     touch "$output2"
 
 
-    if [ "$flattened" = "True" ]; then
+    if [ "$flattened" = "TRUE" ]; then
     
         samtools view -h -@ "$cpus" "$input" \
         | parallel \

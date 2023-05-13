@@ -21,7 +21,7 @@ else
     output=${11}
 fi
 
-if [ "$yale" = "True" ]; then
+if [ "$yale" = "TRUE" ]; then
     module purge
     module load StdEnv
     module load HISAT-3N
@@ -31,7 +31,7 @@ fi
 
     echo "* Aligning reads with HISAT-3n for sample $sample"
 
-    if [ "$chr_tag" = "True" ]; then
+    if [ "$chr_tag" = "TRUE" ]; then
         echo "* chr tag will be included in alignment for " $sample
     fi
 
