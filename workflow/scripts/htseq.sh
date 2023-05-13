@@ -25,7 +25,7 @@ fi
     touch "$output2"
 
 
-    if [ $flattened ]; then
+    if [ "$flattened" = "True" ]; then
     
         samtools view -h -@ "$cpus" "$input" \
         | parallel \
