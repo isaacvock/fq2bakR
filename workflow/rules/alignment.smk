@@ -88,6 +88,24 @@ if FORMAT == 'PE':
             script: 
                 "../scripts/star-align.py"
 
+        rule RSEM_index:
+            input:
+                reference_genome=config['genome_fasta'],
+            output:
+                seq="index/reference.seq",
+                grp="index/reference.grp",
+                ti="index/reference.ti",
+                tfa="index/reference.transcripts.fa",
+                idxfa="index/reference.idx.fa",
+                n2g="index/reference.n2g.idx.fa",
+            params:
+                extra="--gtf {}".format(str(config["annotation"])),
+            log:
+                "logs/rsem/prepare-reference.log",
+            threads: 36
+            wrapper:
+                "v1.23.4/bio/rsem/prepare-reference"
+                
         rule RSEM:
             input:
                 bam="results/bams/{sample}-Aligned.toTranscriptome.out.bam",
