@@ -27,8 +27,10 @@ fi
     touch "$output2"
 
 
-    if [ "$flattened" = "TRUE" ]; then
+    if [ "$flattened" = "True" ]; then
     
+        echo "Flattened was true!"
+
         samtools view -h -@ "$cpus" "$input" \
         | parallel \
             -L 2 \
@@ -49,6 +51,8 @@ fi
                         "$annotation"
 
     else
+
+        echo "Flattened was false!"
 
         samtools view -h -@ "$cpus" "$input" \
         | parallel \
