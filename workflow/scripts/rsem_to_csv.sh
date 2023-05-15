@@ -85,7 +85,7 @@ fragment_size=$(echo "scale=0; $num_reads/$cpus" | bc)
     awk 'FNR > 1 || NR == 1' ./results/rsem_csv/*_"$sample"_frag_rsem.csv \
         | pigz -p $cpus > "$output"
 
-    rm ./results/rsem_csv/*_"$sample"_frag_counts.csv
+    rm ./results/rsem_csv/*_"$sample"_frag_rsem.csv
 
 
 
