@@ -23,3 +23,4 @@ dependencies:
   - r-mass =7.3.58.1
   - bioconductor-edger =3.36.0
   - r-r.utils
+  - r-data.table

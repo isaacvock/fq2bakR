@@ -158,14 +158,14 @@ if FORMAT == 'PE':
             params:
                 rscript = workflow.source_path("../scripts/RSEM_plus.R"),
             log:
-                "logs/RSEM_plus/{sample}.log"
+                "logs/transcript_fn/{sample}.log"
             threads: workflow.cores
             conda:
                 "../envs/full.yaml"
             shell:
                 r"""
                 chmod +x {params.rscript}
-                {params.rscript} -o {output.outfile} -c {input.counts} -r {input.rsem}
+                {params.rscript} -o {output.outfile} -c {input.counts} -r {input.rsem} 1> {log} 2>&1
                 """
 
     # Run hisat2
