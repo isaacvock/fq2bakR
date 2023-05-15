@@ -113,6 +113,7 @@ if FORMAT == 'PE':
             output:
                 genes_results="results/rsem/{sample}.genes.results",
                 isoforms_results="results/rsem/{sample}.isoforms.results",
+                "results/rsem/{sample}.transcript.bam"
             params:
                 # optional, specify if sequencing is paired-end
                 paired_end= True,
@@ -124,6 +125,32 @@ if FORMAT == 'PE':
             threads: 36
             script:
                 "../scripts/rsem-calc.py"
+
+        rule rsem_to_csv:
+            input:
+                "results/rsem/{sample}.transcript.bam",
+            output:
+                "results/rsem_csv/{sample}_rsem.csv.gz",
+                temp("results/rsem_csv/{sample}_check.txt"),
+            params:
+                shellscript = workflow.source_path("../scripts/rsem_to_csv.sh"),
+                pythonscript = workflow.source_path("../scripts/rsem_csv.py"),
+                awkscript = workflow.source_path("../scripts/fragment_sam.awk")
+            output:
+                "results/counts/{sample}_counts.csv.gz",
+                temp("results/counts/{sample}_check.txt")
+            log:
+                "logs/cnt_muts/{sample}.log"
+            threads: workflow.cores
+            conda:
+                "../envs/full.yaml"
+            shell:
+                """
+                chmod +x {params.shellscript}
+                chmod +x {params.pythonscript}
+                chmod +x {params.awkscript}
+                {params.shellscript} {threads} {wildcards.sample} {input} {output} {params.pythonscript} {params.awkscript} 1> {log} 2>&1
+                """
 
     # Run hisat2
     else:
