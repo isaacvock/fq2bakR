@@ -136,9 +136,6 @@ if FORMAT == 'PE':
                 shellscript = workflow.source_path("../scripts/rsem_to_csv.sh"),
                 pythonscript = workflow.source_path("../scripts/rsem_csv.py"),
                 awkscript = workflow.source_path("../scripts/fragment_sam.awk")
-            output:
-                "results/counts/{sample}_counts.csv.gz",
-                temp("results/counts/{sample}_check.txt")
             log:
                 "logs/rsem_to_csv/{sample}.log"
             threads: workflow.cores
@@ -309,9 +306,6 @@ else:
                 shellscript = workflow.source_path("../scripts/rsem_to_csv.sh"),
                 pythonscript = workflow.source_path("../scripts/rsem_csv.py"),
                 awkscript = workflow.source_path("../scripts/fragment_sam.awk")
-            output:
-                "results/counts/{sample}_counts.csv.gz",
-                temp("results/counts/{sample}_check.txt")
             log:
                 "logs/rsem_to_csv/{sample}.log"
             threads: workflow.cores
