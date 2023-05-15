@@ -10,7 +10,7 @@ minqual=$6
 rsemcsv=$7
 awkscript=$8
 
-# Create results/counts/
+# Create results/rsem_csv/
 touch "$output2"
 
 # Infer a decent fragment size
@@ -45,7 +45,7 @@ fragment_size=$(echo "scale=0; $num_reads/$cpus" | bc)
 
 
     for f in $(seq 1 $newFragmentNumber); do
-        samtools view -H "$input" > ./results/counts/"$f"_"$sample".sam
+        samtools view -H "$input" > ./results/rsem_csv/"$f"_"$sample".sam
     done &&
 
 
@@ -81,7 +81,7 @@ fragment_size=$(echo "scale=0; $num_reads/$cpus" | bc)
 
 
 # Combine output from fragments into single file
-    # 1) _count.csv files
+    # 1) _rsem.csv files
     awk 'FNR > 1 || NR == 1' ./results/rsem_csv/*_"$sample"_frag_rsem.csv \
         | pigz -p $cpus > "$output"
 
