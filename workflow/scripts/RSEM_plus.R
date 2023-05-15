@@ -1,8 +1,9 @@
+#!/usr/bin/env Rscript
 ### PURPOSE OF THIS SCRIPT
 ## Combine counts.csv and rsem.csv files to perform
 ## transcript-isoform level analysis
 
-# Load dependencies ------------------------------------------
+### Load dependencies
 
 library(data.table)
 library(tidyverse)
@@ -20,12 +21,12 @@ mixed_lik <- function(pnew, pold, TC, nT, n, logit_fn, p_sd = 1, p_mean = 0){
   return(-logl)
 }
 
-# Process arguments ------------------------------------------
+### Process arguments
 
 args = commandArgs(trailingOnly = TRUE)
 
 
-# Read parameters
+### Read parameters
 
 option_list <- list(
     make_option(c("-c", "--counts", type="character"),
@@ -46,11 +47,11 @@ opt <- parse_args(opt_parser) # Load options from command line.
 
 options(echo = as.logical(opt$echocode))
 
-# Load csvs ---------------------------------------------------
+### Load csvs 
 counts <- fread(opt$counts)
 rsem <- fread(opt$rsem)
 
-# Only keep relevant columns in counts.csv
+### Only keep relevant columns in counts.csv
     # Should eventually allow other mutation types to be analyzed
     # according to mutType argument
 counts <- counts[,c("GF", "XF", "EF", "qname", "TC", "nT")]
@@ -62,7 +63,7 @@ cT <- setDT(inner_join(rsem, counts, by = "qname"))
 rm(counts)
 rm(rsem)
 
-# Estimate new and old mutation rate ------------------------
+### Estimate new and old mutation rate
 
 # Binomial mixture likelihood
 mixture_lik <- function(param, TC, nT, n){
@@ -85,7 +86,7 @@ pold <- inv_logit(min(fit$par[1:2]))
 
 
 
-# Get priors ------------------------------------------------
+### Get priors
 
 
 
