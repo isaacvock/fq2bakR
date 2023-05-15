@@ -33,11 +33,11 @@ option_list <- list(
                     default = ".",
                     help = "count.csv file path"),
     make_option(c("-r", "--rsem", type="character"),
-                    default = "",
+                    default = ".",
                     help = 'rsem.csv file path'),
     make_option(c("-o", "--output", type = "character"),
-                    default = "",
-                    help = 'output file path')
+                    default = ".",
+                    help = 'output file path'),
     make_option(c("-e", "--echocode", type="logical"),
                     default = "FALSE",
                     help = 'print R code to stdout'))
