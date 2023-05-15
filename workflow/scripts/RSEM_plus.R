@@ -38,7 +38,7 @@ option_list <- list(
     make_option(c("-o", "--output", type = "character"),
                     default = ".",
                     help = 'output file path'),
-    make_option(c("-s", "sample", type = "character"),
+    make_option(c("-s", "--sample", type = "character"),
                     default = "",
                     help = "sample name"),
     make_option(c("-e", "--echocode", type="logical"),
