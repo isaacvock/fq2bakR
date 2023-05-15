@@ -34,6 +34,9 @@ option_list <- list(
     make_option(c("-r", "--rsem", type="character"),
                     default = "",
                     help = 'rsem.csv file path'),
+    make_option(c("-o", "--output", type = "character"),
+                    default = "",
+                    help = 'output file path')
     make_option(c("-e", "--echocode", type="logical"),
                     default = "FALSE",
                     help = 'print R code to stdout'))
@@ -52,19 +55,34 @@ rsem <- fread(opt$rsem)
     # according to mutType argument
 counts <- counts[,c("GF", "XF", "EF", "qname", "TC", "nT")]
 
-rsem <- setDT(inner_join(rsem, counts, by = "qname"))
+cB <- counts[!grepl("__", XF), .N, by = .(XF, TC, nT)]
+
+cT <- setDT(inner_join(rsem, counts, by = "qname"))
 
 rm(counts)
+rm(rsem)
 
 # Estimate new and old mutation rate ------------------------
 
-# Likelihood function for mixture model
-mixed_lik <- function(pnew, pold, TC, nT, n, logit_fn, p_sd = 1, p_mean = 0){
-  logl <- sum(n*(log(inv_logit(logit_fn)*dbinom(TC, size = nT, prob = pnew) + (1-inv_logit(logit_fn))*dbinom(TC, nT, pold) ) ) ) + log(stats::dnorm(logit_fn, mean = p_mean, sd = p_sd))
-  return(-logl)
+# Binomial mixture likelihood
+mixture_lik <- function(param, TC, nT, n){
+
+    logl <- sum(n*log(inv_logit(param[3])*(factorial(nT)/(factorial(nT-TC)*factorial(TC)))*(inv_logit(param[1])^TC)*((1 -inv_logit(param[1]))^(nT-TC)) +  (1-inv_logit(param[3]))*(factorial(nT)/(factorial(nT-TC)*factorial(TC)))*(inv_logit(param[2])^TC)*((1 - inv_logit(param[2]))^(nT-TC)) ) )
+
+    return(-logl)
+
 }
 
-rsem
+low_ps <- c(-9, -9, -9)
+high_ps <- c(0, 0, 9)
+
+fit <- stats::optim(par=c(-7,-2,0), mixture_lik, TC = cB$TC, nT = cB$nT,
+                                n = cB$N, method = "L-BFGS-B", 
+                                lower = low_ps, upper = high_ps)
+
+pnew <- inv_logit(max(fit$par[1:2]))
+pold <- inv_logit(min(fit$par[1:2]))
+
 
 
 # Get priors ------------------------------------------------
@@ -78,25 +96,29 @@ cT$pold <- pold
 cB$pnew <- pnew
 cB$pold <- pold
 
+# Likelihood function for mixture model
+mixed_lik <- function(pnew, pold, TC, nT, n, logit_fn, p_sd = 1, p_mean = 0){
+  logl <- sum(n*(log(inv_logit(logit_fn)*dbinom(TC, size = nT, prob = pnew) + (1-inv_logit(logit_fn))*dbinom(TC, nT, pold) ) ) ) + log(stats::dnorm(logit_fn, mean = p_mean, sd = p_sd))
+  return(-logl)
+}
 
 # Estimate GF for prior
 Fn_prior <- cB %>% dplyr::ungroup() %>%
   dplyr::mutate(n = 1) %>%
-  dplyr::group_by(GF, TC, nT, pnew, pold) %>%
+  dplyr::group_by(XF, TC, nT, pnew, pold) %>%
   dplyr::summarise(n = sum(n)) %>%
-  dplyr::group_by(GF) %>%
+  dplyr::group_by(XF) %>%
   dplyr::summarise(logit_fn_rep = stats::optim(0, mixed_lik, nT = nT, TC = TC, n = n, pnew = pnew, pold = pold, method = "L-BFGS-B", lower = -7, upper = 7)$par, nreads =sum(n), .groups = "keep") %>%
   dplyr::ungroup() %>%
   dplyr::mutate(prior = inv_logit(logit_fn_rep)) %>%
-  dplyr::select(GF, prior)
+  dplyr::select(XF, prior)
 
 
 # Add prior info
-cT <- inner_join(cT, Fn_prior, by = "GF")
+cT <- inner_join(cT, Fn_prior, by = "XF")
 
 # Calculate logit(fn) with analytical Bayesian approach
-Fn_est <- cT %>% dplyr::ungroup() %>%
-  dplyr::mutate(n = 1) %>%
-  dplyr::group_by(GF, TF) %>%
-  dplyr::summarise(logit_fn_est = (sum((probability*dbinom(TC, nT, pnew)*prior)/(dbinom(TC, nT, pnew)*prior + dbinom(TC, nT, pold)*(1-prior)) ))/(sum(probability)) )
+Fn_est <- cT[,.(logit_fn_est = (sum((probability*dbinom(TC, nT, pnew)*prior)/(dbinom(TC, nT, pnew)*prior + dbinom(TC, nT, pold)*(1-prior)) ))/(sum(probability))), by = .(XF, TF)]
+
+write_csv(Fn_est, file = opt$output)
 

@@ -148,6 +148,24 @@ if FORMAT == 'PE':
                 chmod +x {params.awkscript}
                 {params.shellscript} {threads} {wildcards.sample} {input} {output} {params.pythonscript} {params.awkscript} 1> {log} 2>&1
                 """
+        rule transcript_fn:
+            input:
+                rsem="results/rsem_csv/{sample}_rsem.csv.gz",
+                counts="results/counts/{sample}_counts.csv.gz",
+            output:
+                "results/transcript_fn/{sample}_RSEM_plus.rds",
+            params:
+                rscript = workflow.source_path("../scripts/RSEM_plus.R"),
+            log:
+                "logs/RSEM_plus/{sample}.log"
+            threads: workflow.cores
+            conda:
+                "../envs/full.yaml"
+            shell:
+                r"""
+                chmod +x {params.rscript}
+                {params.rscript} -o {output} -c {input.counts} -r {input.rsem}
+                """
 
     # Run hisat2
     else:
