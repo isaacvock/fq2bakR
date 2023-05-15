@@ -104,9 +104,8 @@ mixed_lik <- function(pnew, pold, TC, nT, n, logit_fn, p_sd = 1, p_mean = 0){
 
 # Estimate GF for prior
 Fn_prior <- cB %>% dplyr::ungroup() %>%
-  dplyr::mutate(n = 1) %>%
   dplyr::group_by(XF, TC, nT, pnew, pold) %>%
-  dplyr::summarise(n = sum(n)) %>%
+  dplyr::summarise(n = sum(N)) %>%
   dplyr::group_by(XF) %>%
   dplyr::summarise(logit_fn_rep = stats::optim(0, mixed_lik, nT = nT, TC = TC, n = n, pnew = pnew, pold = pold, method = "L-BFGS-B", lower = -7, upper = 7)$par, nreads =sum(n), .groups = "keep") %>%
   dplyr::ungroup() %>%
@@ -115,10 +114,10 @@ Fn_prior <- cB %>% dplyr::ungroup() %>%
 
 
 # Add prior info
-cT <- inner_join(cT, Fn_prior, by = "XF")
+cT <- setDT(inner_join(cT, Fn_prior, by = "XF"))
 
 # Calculate logit(fn) with analytical Bayesian approach
-Fn_est <- cT[,.(logit_fn_est = (sum((probability*dbinom(TC, nT, pnew)*prior)/(dbinom(TC, nT, pnew)*prior + dbinom(TC, nT, pold)*(1-prior)) ))/(sum(probability))), by = .(XF, TF)]
+Fn_est <- cT[,.(fn_est = (sum((probability*dbinom(TC, nT, pnew)*prior)/(dbinom(TC, nT, pnew)*prior + dbinom(TC, nT, pold)*(1-prior)) ))/(sum(probability))), by = .(XF, TF)]
 
 write_csv(Fn_est, file = opt$output)
 
