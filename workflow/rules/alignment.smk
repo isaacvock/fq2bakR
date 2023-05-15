@@ -113,7 +113,7 @@ if FORMAT == 'PE':
             output:
                 genes_results="results/rsem/{sample}.genes.results",
                 isoforms_results="results/rsem/{sample}.isoforms.results",
-                "results/rsem/{sample}.transcript.bam"
+                bam="results/rsem/{sample}.transcript.bam"
             params:
                 # optional, specify if sequencing is paired-end
                 paired_end= True,
