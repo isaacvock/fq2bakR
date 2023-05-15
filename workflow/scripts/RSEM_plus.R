@@ -38,6 +38,9 @@ option_list <- list(
     make_option(c("-o", "--output", type = "character"),
                     default = ".",
                     help = 'output file path'),
+    make_option(c("-s", "sample", type = "character"),
+                    default = "",
+                    help = "sample name"),
     make_option(c("-e", "--echocode", type="logical"),
                     default = "FALSE",
                     help = 'print R code to stdout'))
@@ -120,6 +123,8 @@ cT <- setDT(inner_join(cT, Fn_prior, by = "XF"))
 # Calculate logit(fn) with analytical Bayesian approach
 Fn_est <- cT[,.(fn_est = (sum((pt*dbinom(TC, nT, pnew)*prior)/(dbinom(TC, nT, pnew)*prior + dbinom(TC, nT, pold)*(1-prior)) ))/(sum(pt)),
                 nreads = sum(pt)), by = .(XF, TF)]
+
+Fn_est$sample <- opt$sample
 
 write_csv(Fn_est, file = opt$output)
 

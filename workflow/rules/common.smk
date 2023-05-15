@@ -4,6 +4,8 @@ SAMP_NAMES = list(config['samples'].keys())
 
 CTL_NAMES = list(config['control_samples'])
 
+s4U_SAMPS = list(set(SAMP_NAMES) - set(CTL_NAMES))
+
 nctl = len(CTL_NAMES)
 nsamps = len(SAMP_NAMES)
 
