@@ -30,3 +30,5 @@ wr.writerow(header)
 for r in samfile:
     r_info = [r.query_name, r.reference_name, r.get_tag('ZF')]
     wr.writerow(r_info)
+
+myfile.close()

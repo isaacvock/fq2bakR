@@ -6,9 +6,8 @@ sample=$2
 input=$3
 output=$4
 output2=$5
-minqual=$6
-rsemcsv=$7
-awkscript=$8
+rsemcsv=$6
+awkscript=$7
 
 # Create results/rsem_csv/
 touch "$output2"
