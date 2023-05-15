@@ -118,7 +118,7 @@ Fn_prior <- cB %>% dplyr::ungroup() %>%
 cT <- setDT(inner_join(cT, Fn_prior, by = "XF"))
 
 # Calculate logit(fn) with analytical Bayesian approach
-Fn_est <- cT[,.(fn_est = (sum((probability*dbinom(TC, nT, pnew)*prior)/(dbinom(TC, nT, pnew)*prior + dbinom(TC, nT, pold)*(1-prior)) ))/(sum(probability))), by = .(XF, TF)]
+Fn_est <- cT[,.(fn_est = (sum((pt*dbinom(TC, nT, pnew)*prior)/(dbinom(TC, nT, pnew)*prior + dbinom(TC, nT, pold)*(1-prior)) ))/(sum(pt))), by = .(XF, TF)]
 
 write_csv(Fn_est, file = opt$output)
 
