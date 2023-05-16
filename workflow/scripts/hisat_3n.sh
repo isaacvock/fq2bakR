@@ -21,7 +21,7 @@ else
     output=${11}
 fi
 
-if [ "$yale" = "TRUE" ]; then
+if [ "$yale" = "True" ]; then
     module purge
     module load StdEnv
     module load HISAT-3N
